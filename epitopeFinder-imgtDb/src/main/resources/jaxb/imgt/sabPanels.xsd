@@ -1,0 +1,26 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://pathology.emory.edu/hladpb1HypervariableRegion" targetNamespace="http://pathology.emory.edu/hladpb1HypervariableRegion" elementFormDefault="qualified">
+
+	<xs:element name="sabPanels">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="sabPanel" maxOccurs="unbounded" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+		
+	<xs:element name="sabPanel">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="sab" maxOccurs="unbounded" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attribute type="xs:string" name="epRegLocusGroup"/>
+		</xs:complexType>
+	</xs:element>
+		
+	<xs:element name="sab">
+		<xs:complexType>
+			<xs:attribute type="xs:string" name="epRegAlleleName"/>
+		</xs:complexType>
+	</xs:element>
+	
+</xs:schema>
