@@ -2,7 +2,9 @@ package edu.emory.pathology.epitopefinder.imgtdb;
 
 import edu.emory.pathology.epitopefinder.imgtdb.data.Allele;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -17,6 +19,25 @@ public class AlleleFinder {
 
     private static final Logger LOG = Logger.getLogger(AlleleFinder.class.getName());
 
+    private static Map<String, String> imgtLocusToEpRegLocusGroupMap;
+
+    static {
+        imgtLocusToEpRegLocusGroupMap = new HashMap<>();
+        imgtLocusToEpRegLocusGroupMap.put("HLA-A", "ABC");
+        imgtLocusToEpRegLocusGroupMap.put("HLA-B", "ABC");
+        imgtLocusToEpRegLocusGroupMap.put("HLA-C", "ABC");
+        imgtLocusToEpRegLocusGroupMap.put("HLA-DRB1", "DRB");
+        imgtLocusToEpRegLocusGroupMap.put("HLA-DRB2", "DRB");
+        imgtLocusToEpRegLocusGroupMap.put("HLA-DRB3", "DRB");
+        imgtLocusToEpRegLocusGroupMap.put("HLA-DRB4", "DRB");
+        imgtLocusToEpRegLocusGroupMap.put("HLA-DRB5", "DRB");
+        imgtLocusToEpRegLocusGroupMap.put("HLA-DQB1", "DQ");
+        imgtLocusToEpRegLocusGroupMap.put("HLA-DQA1", "DQ");
+        imgtLocusToEpRegLocusGroupMap.put("HLA-DPB1", "DP");
+        imgtLocusToEpRegLocusGroupMap.put("HLA-DPA1", "DP");
+    }
+    
+    
     private String xmlFileName;
     private List<Allele> alleleList;
 
@@ -36,7 +57,6 @@ public class AlleleFinder {
     }
 
     public List<Allele> getAlleleList() {
-        
         if(alleleList == null) {
             alleleList = new ArrayList();
             JaxbImgtFinder imgtFinder = new JaxbImgtFinder(xmlFileName);
@@ -46,14 +66,19 @@ public class AlleleFinder {
             imgtAlleles.getAllele().stream().forEach((imgtAllele) -> {
                 Matcher matcher = pattern.matcher(imgtAllele.getName());
                 if(matcher.find()) {
-                    String epRegAlleleName = String.format("%s*%s:%s", matcher.group(1), matcher.group(2), matcher.group(3));
-                    // Only adding the first IMGT allele corresponding to an epitope registry allele name.
-                    if(alleleList.stream().filter((filterAllele) -> (filterAllele.getEpRegAlleleName().equals(epRegAlleleName))).count() == 0) {
-                        Allele allele = new Allele();
-                        alleleList.add(allele);
-                        allele.setVersion(imgtAllele.getReleaseversions().getCurrentrelease());
-                        allele.setAlleleName(imgtAllele.getName());
-                        allele.setEpRegAlleleName(epRegAlleleName);
+                    String epRegLocusGroup = imgtLocusToEpRegLocusGroupMap.get(String.format("HLA-%s", matcher.group(1)));
+                    // Only adding IMGT alleles that correspond to an epitope registry locus group.
+                    if(epRegLocusGroup != null) {
+                        String epRegAlleleName = String.format("%s*%s:%s", matcher.group(1), matcher.group(2), matcher.group(3));
+                        // Only adding the first IMGT allele corresponding to an epitope registry allele name.
+                        if(alleleList.stream().filter((filterAllele) -> (filterAllele.getEpRegAlleleName().equals(epRegAlleleName))).count() == 0) {
+                            Allele allele = new Allele();
+                            alleleList.add(allele);
+                            allele.setVersion(imgtAllele.getReleaseversions().getCurrentrelease());
+                            allele.setAlleleName(imgtAllele.getName());
+                            allele.setEpRegLocusGroup(epRegLocusGroup);
+                            allele.setEpRegAlleleName(epRegAlleleName);
+                        }
                     }
                 }
             });
@@ -63,10 +88,16 @@ public class AlleleFinder {
                 allele.setSequenceNumber(sequenceNumber++);
             }
         }
-        
         return alleleList;
-        
     }
-
+    
+    public void assignCurrentSabPanelAlleles(SabPanelFinder sabPanelFinder) {
+        getAlleleList().stream().forEach((allele) -> { allele.setInCurrentSabPanel(false); });
+        sabPanelFinder.getSabPanelList().stream().forEach((sabPanel) -> {
+            sabPanel.getEpRegAlleleNameList().stream().forEach((epRegAlleleName) -> {
+                getAlleleByEpRegAlleleName(epRegAlleleName).setInCurrentSabPanel(true);
+            });
+        });
+    }
     
 }

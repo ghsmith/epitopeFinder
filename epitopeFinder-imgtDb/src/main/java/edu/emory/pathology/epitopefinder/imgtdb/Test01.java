@@ -18,16 +18,16 @@ public class Test01 {
         AlleleFinder af = new AlleleFinder("data/hla.xml");
         int x = 1;
         for(Allele allele : af.getAlleleList()) {
-            if(allele.getAlleleName().matches("HLA-DRB[^*]*\\*.*")) {
+            if(allele.getAlleleName().matches("HLA-DPA[^*]*\\*.*")) {
                 System.out.println(String.format("%5d: %s %s", x++, allele.getAlleleName(), allele.getEpRegAlleleName()));
             }
         };
-        System.out.println(af.getAllele("HLA-C*18:10"));
-        System.out.println(af.getAlleleByEpRegAlleleName("C*18:10"));
-        SabPanelFinder sf = new SabPanelFinder("data/sabPanels.xml");
-        for(SabPanel  sabPanel : sf.getSabPanelList()) {
-            System.out.println(String.format("%s: %s", sabPanel.getEpRegLocusGroup(), sabPanel.getEpRegAlleleNameList()));
-        }
+        //System.out.println(af.getAllele("HLA-C*18:10"));
+        //System.out.println(af.getAlleleByEpRegAlleleName("C*18:10"));
+        //SabPanelFinder sf = new SabPanelFinder("data/sabPanels.xml");
+        //for(SabPanel  sabPanel : sf.getSabPanelList()) {
+        //    System.out.println(String.format("%s: %s", sabPanel.getEpRegLocusGroup(), sabPanel.getEpRegAlleleNameList()));
+        //}
     }
     
 }

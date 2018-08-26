@@ -15,6 +15,8 @@ public class Allele implements Serializable {
     private String epRegLocusGroup;
     private String epRegAlleleName;
     private List<String> epRegEpitopeNameList;
+    private Boolean inCurrentSabPanel;
+    private Boolean inEpRegSabPanel;
     private Boolean recipientAntibodyForCompat = false;
     private Boolean recipientTypeForCompat = false;
     private Boolean donorTypeForCompat = false;
@@ -66,6 +68,22 @@ public class Allele implements Serializable {
 
     public void setEpRegEpitopeNameList(List<String> epRegEpitopeNameList) {
         this.epRegEpitopeNameList = epRegEpitopeNameList;
+    }
+
+    public Boolean getInCurrentSabPanel() {
+        return inCurrentSabPanel;
+    }
+
+    public void setInCurrentSabPanel(Boolean inCurrentSabPanel) {
+        this.inCurrentSabPanel = inCurrentSabPanel;
+    }
+
+    public Boolean getInEpRegSabPanel() {
+        return inEpRegSabPanel;
+    }
+
+    public void setInEpRegSabPanel(Boolean inEpRegSabPanel) {
+        this.inEpRegSabPanel = inEpRegSabPanel;
     }
 
     public Boolean getRecipientAntibodyForCompat() {
