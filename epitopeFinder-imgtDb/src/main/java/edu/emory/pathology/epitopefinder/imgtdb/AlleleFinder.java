@@ -8,10 +8,11 @@ import java.util.Map;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * This finder class loads our local data classes from the IMGT data classes.
- * Our local data classes are optimized for the HLA-DPB1 classifier.
+ * Our local data classes are optimized for the epitope classifier.
  * 
  * @author ghsmith
  */
@@ -54,6 +55,10 @@ public class AlleleFinder {
     
     public Allele getAlleleByEpRegAlleleName(String epRegAlleleName) {
         return getAlleleList().stream().filter((allele) -> (epRegAlleleName.equals(allele.getEpRegAlleleName()))).findFirst().get();
+    }
+
+    public List<Allele> getAlleleListByEpRegLocusGroup(String epRegLocusGroup) {
+        return getAlleleList().stream().filter((allele) -> (epRegLocusGroup.equals(allele.getEpRegLocusGroup()))).collect(Collectors.toList());
     }
 
     public List<Allele> getAlleleList() {

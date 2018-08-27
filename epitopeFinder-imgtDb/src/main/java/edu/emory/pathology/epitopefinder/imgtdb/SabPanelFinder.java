@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 
 /**
  * This finder class loads our local data classes from the Emory data classes.
- * Our local data classes are optimized for the HLA-DPB1 classifier.
+ * Our local data classes are optimized for the epitope classifier.
  *
  * @author ghsmith
  */
