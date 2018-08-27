@@ -2,6 +2,7 @@ package edu.emory.pathology.epitopefinder.imgtdb;
 
 import edu.emory.pathology.epitopefinder.imgtdb.data.EpRegEpitope;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -41,6 +43,10 @@ public class EpRegEpitopeFinder {
     public EpRegEpitope getEpitope(String locusGroup, String epitopeName) {
         return getEpitopeList().stream().filter((epitope) -> (locusGroup.equals(epitope.getLocusGroup()) && epitopeName.equals(epitope.getEpitopeName()))).findFirst().get();
     }
+
+    public List<EpRegEpitope> getEpitopeListByEpRegLocusGroup(String locusGroup) {
+        return getEpitopeList().stream().filter((epitope) -> (locusGroup.equals(epitope.getLocusGroup()))).collect(Collectors.toList());
+    }
     
     public List<EpRegEpitope> getEpitopeList() {
         if(epitopeList == null) {
@@ -71,6 +77,7 @@ public class EpRegEpitopeFinder {
                         epitope.setLocusGroup(locusGroup);
                         epitope.setEpitopeName(epitopeName);
                         epitope.setAlleleMap(new TreeMap<>());
+                        epitope.setCompatAlleleFilterMap(new TreeMap<>());
                         alleleNameList.stream().forEach((alleleName) -> {
                             EpRegEpitope.EpRegEpitopeAlleleRef epitopeAlleleRef = new EpRegEpitope.EpRegEpitopeAlleleRef();
                             epitope.getAlleleMap().put(alleleName, epitopeAlleleRef);
@@ -108,8 +115,35 @@ public class EpRegEpitopeFinder {
     }
 
     public void computeCompatInterpretation(AlleleFinder alleleFinder) {
+        getEpitopeList().stream().forEach((epitope) -> { epitope.getCompatAlleleFilterMap().clear(); });
         for(String locusGroup : locusGroups) {
-            
+            alleleFinder.getAlleleListByEpRegLocusGroup(locusGroup).stream().filter((allele) -> (allele.getRecipientAntibodyForCompat())).forEach((alleleSab) -> {
+                StringWriter queryString = new StringWriter();
+                queryString.append(String.format("&hlaTyping=%s", alleleSab.getEpRegAlleleName()));
+                alleleFinder.getAlleleListByEpRegLocusGroup(locusGroup).stream().filter((allele) -> (allele.getRecipientTypeForCompat())).forEach((alleleType) -> {
+                    queryString.append(String.format("&typeRecipient%%5B%%5D=%s", alleleType.getEpRegAlleleName()));
+                });
+                try {
+                    URL url = new URL(String.format(stringUrl, locusGroup) + queryString.toString());
+                    Document document = Jsoup.connect(url.toString()).maxBodySize(0).timeout(5000).get();
+                    for(Element rowE : Xsoup.compile("//section[@id='table-result']/div/table/tbody/tr").evaluate(document).getElements()) {
+                        String epitopeName = Xsoup.compile("/td").evaluate(rowE).list().get(0).replaceAll("<td[^>]*>(.*)</td>", "$1").replaceAll("<sub[^>]*>(.*)</sub>", "-$1").trim();
+                        EpRegEpitope epitope = getEpitope(locusGroup, epitopeName);
+                        EpRegEpitope.EpRegEpitopeAlleleFilterRef alleleFilter = new EpRegEpitope.EpRegEpitopeAlleleFilterRef();
+                        epitope.getCompatAlleleFilterMap().put(alleleSab.getEpRegAlleleName(), alleleFilter);
+                        alleleFilter.setSourceUrl(url.toString());
+                        alleleFilter.setEpRegReactiveAlleleName(alleleSab.getEpRegAlleleName());
+                    }
+                }
+                catch (MalformedURLException e) {
+                    LOG.log(Level.SEVERE, null, e);
+                    throw new RuntimeException(e);
+                }
+                catch (IOException e) {
+                    LOG.log(Level.SEVERE, null, e);
+                    throw new RuntimeException(e);
+                }
+            });
         }
     }
     

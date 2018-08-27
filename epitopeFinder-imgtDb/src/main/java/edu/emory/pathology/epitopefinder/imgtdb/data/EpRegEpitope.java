@@ -1,7 +1,6 @@
 package edu.emory.pathology.epitopefinder.imgtdb.data;
 
 import java.io.Serializable;
-import java.util.Map;
 import java.util.SortedMap;
 
 /**
@@ -10,14 +9,12 @@ import java.util.SortedMap;
  */
 public class EpRegEpitope implements Serializable {
 
-    public static class EpRegEpitopeAlleleRef {
+    public static class EpRegEpitopeAlleleRef implements Serializable {
         
         private String epRegAlleleName;
         private Boolean inCurrentSabPanel;
         private Boolean inEpRegSabPanel;
-        private Boolean compatFilteredSourceUrl;
-        private Boolean compatFiltered;
-        private String compatInterpretation;
+        private String compatStatus;
 
         public String getEpRegAlleleName() {
             return epRegAlleleName;
@@ -43,30 +40,37 @@ public class EpRegEpitope implements Serializable {
             this.inEpRegSabPanel = inEpRegSabPanel;
         }
 
-        public Boolean getCompatFilteredSourceUrl() {
-            return compatFilteredSourceUrl;
+        public String getCompatStatus() {
+            return compatStatus;
         }
 
-        public void setCompatFilteredSourceUrl(Boolean compatFilteredSourceUrl) {
-            this.compatFilteredSourceUrl = compatFilteredSourceUrl;
+        public void setCompatStatus(String compatStatus) {
+            this.compatStatus = compatStatus;
+        }
+        
+    }
+
+    public static class EpRegEpitopeAlleleFilterRef implements Serializable {
+        
+        private String sourceUrl;
+        private String epRegReactiveAlleleName;
+
+        public String getSourceUrl() {
+            return sourceUrl;
         }
 
-        public Boolean getCompatFiltered() {
-            return compatFiltered;
+        public void setSourceUrl(String sourceUrl) {
+            this.sourceUrl = sourceUrl;
         }
 
-        public void setCompatFiltered(Boolean compatFiltered) {
-            this.compatFiltered = compatFiltered;
+        public String getEpRegReactiveAlleleName() {
+            return epRegReactiveAlleleName;
         }
 
-        public String getCompatInterpretation() {
-            return compatInterpretation;
+        public void setEpRegReactiveAlleleName(String epRegReactiveAlleleName) {
+            this.epRegReactiveAlleleName = epRegReactiveAlleleName;
         }
-
-        public void setCompatInterpretation(String compatInterpretation) {
-            this.compatInterpretation = compatInterpretation;
-        }
-
+        
     }
     
     private Integer sequenceNumber;
@@ -74,9 +78,11 @@ public class EpRegEpitope implements Serializable {
     private String locusGroup;
     private String epitopeName;
     private SortedMap<String, EpRegEpitopeAlleleRef> alleleMap;
+    private SortedMap<String, EpRegEpitopeAlleleFilterRef> compatAlleleFilterMap;
     private Integer compatSabPanelCountPresent;
     private Integer compatSabPanelCountAbsent;
     private Integer compatSabPanelCountUnknown;
+    private String compatInterpretation;
 
     public Integer getSequenceNumber() {
         return sequenceNumber;
@@ -118,6 +124,14 @@ public class EpRegEpitope implements Serializable {
         this.alleleMap = alleleMap;
     }
 
+    public SortedMap<String, EpRegEpitopeAlleleFilterRef> getCompatAlleleFilterMap() {
+        return compatAlleleFilterMap;
+    }
+
+    public void setCompatAlleleFilterMap(SortedMap<String, EpRegEpitopeAlleleFilterRef> compatAlleleFilterMap) {
+        this.compatAlleleFilterMap = compatAlleleFilterMap;
+    }
+
     public Integer getCompatSabPanelCountPresent() {
         return compatSabPanelCountPresent;
     }
@@ -141,5 +155,13 @@ public class EpRegEpitope implements Serializable {
     public void setCompatSabPanelCountUnknown(Integer compatSabPanelCountUnknown) {
         this.compatSabPanelCountUnknown = compatSabPanelCountUnknown;
     }
-   
+
+    public String getCompatInterpretation() {
+        return compatInterpretation;
+    }
+
+    public void setCompatInterpretation(String compatInterpretation) {
+        this.compatInterpretation = compatInterpretation;
+    }
+    
 }
