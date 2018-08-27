@@ -1,6 +1,7 @@
 package edu.emory.pathology.epitopefinder.webservices;
 
 import edu.emory.pathology.epitopefinder.imgtdb.AlleleFinder;
+import edu.emory.pathology.epitopefinder.imgtdb.EpRegEpitopeFinder;
 import edu.emory.pathology.epitopefinder.imgtdb.SabPanelFinder;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -28,6 +29,7 @@ public class SessionFilter implements Filter {
     protected static ThreadLocal<String> sessionMutex = new ThreadLocal<>();
     protected static ThreadLocal<AlleleFinder> alleleFinder = new ThreadLocal<>();
     protected static ThreadLocal<SabPanelFinder> sabPanelFinder = new ThreadLocal<>();
+    protected static ThreadLocal<EpRegEpitopeFinder> epRegEpitopeFinder = new ThreadLocal<>();
     
     private static final boolean debug = false;
 
@@ -61,16 +63,21 @@ public class SessionFilter implements Filter {
         synchronized(sessionMutex) {
             AlleleFinder alleleFinder = (AlleleFinder)((HttpServletRequest)request).getSession().getAttribute("alleleFinder");
             SabPanelFinder sabPanelFinder = (SabPanelFinder)((HttpServletRequest)request).getSession().getAttribute("sabPanelFinder");
-            if(alleleFinder == null || sabPanelFinder == null) {
+            EpRegEpitopeFinder epRegEpitopeFinder = (EpRegEpitopeFinder)((HttpServletRequest)request).getSession().getAttribute("epRegEpitopeFinder");
+            if(alleleFinder == null || sabPanelFinder == null || epRegEpitopeFinder == null) {
                 alleleFinder = new AlleleFinder(request.getServletContext().getInitParameter("imgtXmlFileName"));
                 sabPanelFinder = new SabPanelFinder(request.getServletContext().getInitParameter("emoryXmlFileName"));
                 alleleFinder.assignCurrentSabPanelAlleles(sabPanelFinder);
+                epRegEpitopeFinder = new EpRegEpitopeFinder();
+                epRegEpitopeFinder.assignCurrentSabPanelAlleles(sabPanelFinder);
                 ((HttpServletRequest)request).getSession().setAttribute("alleleFinder", alleleFinder);
                 ((HttpServletRequest)request).getSession().setAttribute("sabPanelFinder", sabPanelFinder);
+                ((HttpServletRequest)request).getSession().setAttribute("epRegEpitopeFinder", epRegEpitopeFinder);
             }
             SessionFilter.sessionMutex.set(sessionMutex);
             SessionFilter.alleleFinder.set(alleleFinder);
             SessionFilter.sabPanelFinder.set(sabPanelFinder);
+            SessionFilter.epRegEpitopeFinder.set(epRegEpitopeFinder);
         }
         
     }    
