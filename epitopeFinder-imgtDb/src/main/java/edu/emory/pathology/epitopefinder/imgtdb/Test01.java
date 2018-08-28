@@ -6,6 +6,7 @@
 package edu.emory.pathology.epitopefinder.imgtdb;
 
 import edu.emory.pathology.epitopefinder.imgtdb.data.Allele;
+import edu.emory.pathology.epitopefinder.imgtdb.data.EpRegEpitope;
 import edu.emory.pathology.epitopefinder.imgtdb.data.SabPanel;
 
 /**
@@ -28,6 +29,15 @@ public class Test01 {
         //for(SabPanel  sabPanel : sf.getSabPanelList()) {
         //    System.out.println(String.format("%s: %s", sabPanel.getEpRegLocusGroup(), sabPanel.getEpRegAlleleNameList()));
         //}
+        af.assignCurrentSabPanelAlleles(new SabPanelFinder("data/sabPanels.xml"));
+        EpRegEpitopeFinder ef = new EpRegEpitopeFinder();
+        ef.assignCurrentSabPanelAlleles(new SabPanelFinder("data/sabPanels.xml"));
+        for(EpRegEpitope epitope : ef.getEpitopeList()) {
+            if(epitope.getAlleleMap() == null) {
+                System.out.println(epitope.getLocusGroup() + " " + epitope.getEpitopeName());
+            }
+        }
+        
     }
     
 }

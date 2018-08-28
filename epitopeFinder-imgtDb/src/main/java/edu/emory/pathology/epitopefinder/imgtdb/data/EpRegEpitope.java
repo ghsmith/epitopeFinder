@@ -82,7 +82,7 @@ public class EpRegEpitope implements Serializable {
     private Integer compatSabPanelCountPresent;
     private Integer compatSabPanelCountAbsent;
     private Integer compatSabPanelCountUnknown;
-    private String compatInterpretation;
+    private Integer compatSabPantelPctPresent;
 
     public Integer getSequenceNumber() {
         return sequenceNumber;
@@ -156,12 +156,12 @@ public class EpRegEpitope implements Serializable {
         this.compatSabPanelCountUnknown = compatSabPanelCountUnknown;
     }
 
-    public String getCompatInterpretation() {
-        return compatInterpretation;
+    public Integer getCompatSabPantelPctPresent() {
+        return compatSabPantelPctPresent;
     }
 
-    public void setCompatInterpretation(String compatInterpretation) {
-        this.compatInterpretation = compatInterpretation;
+    public void setCompatSabPantelPctPresent(Integer compatSabPantelPctPresent) {
+        this.compatSabPantelPctPresent = compatSabPantelPctPresent;
     }
     
 }

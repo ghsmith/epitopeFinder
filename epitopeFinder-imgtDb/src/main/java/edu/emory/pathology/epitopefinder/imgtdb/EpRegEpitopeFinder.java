@@ -114,8 +114,18 @@ public class EpRegEpitopeFinder {
         });
     }
 
-    public void computeCompatInterpretation(AlleleFinder alleleFinder) {
+    public void computeCompatProperties(AlleleFinder alleleFinder) {
+
+        // 0. Nullify everything computed.
         getEpitopeList().stream().forEach((epitope) -> { epitope.getCompatAlleleFilterMap().clear(); });
+        getEpitopeList().stream().forEach((epitope) -> { epitope.getAlleleMap().values().stream().forEach((allele) -> { allele.setCompatStatus(null); }); });
+        getEpitopeList().stream().forEach((epitope) -> { epitope.setCompatSabPanelCountPresent(null);
+                                                         epitope.setCompatSabPanelCountAbsent(null);
+                                                         epitope.setCompatSabPanelCountUnknown(null);
+                                                         epitope.setCompatSabPantelPctPresent(null); });
+        
+        // 1. Query the filtered epitopes from the epitope registry, one query
+        //    per recipient antibody.
         for(String locusGroup : locusGroups) {
             alleleFinder.getAlleleListByEpRegLocusGroup(locusGroup).stream().filter((allele) -> (allele.getRecipientAntibodyForCompat())).forEach((alleleSab) -> {
                 StringWriter queryString = new StringWriter();
@@ -145,6 +155,38 @@ public class EpRegEpitopeFinder {
                 }
             });
         }
+
+        // 2. Set the compatStatus properties for each epitope allele.
+        for(String locusGroup : locusGroups) {
+            getEpitopeListByEpRegLocusGroup(locusGroup).stream().forEach((epitope) -> {
+                epitope.getAlleleMap().values().stream().filter((allele) -> (allele.getInCurrentSabPanel() || allele.getInEpRegSabPanel())).forEach((allele) -> {
+                    if(epitope.getCompatAlleleFilterMap().values().stream().filter((alleleFilter) -> (allele.getEpRegAlleleName().equals(alleleFilter.getEpRegReactiveAlleleName()))).findFirst().isPresent()) {
+                        allele.setCompatStatus("+"); // bead is positive
+                    }
+                    else {
+                        if(allele.getInCurrentSabPanel()) {
+                            allele.setCompatStatus("-"); // bead is negative
+                        }
+                        else {
+                            allele.setCompatStatus("?"); // we don't know status of bead (bead is part of Epitope Registry Panel but not current panel)
+                        }
+                    }
+                });
+            });
+        }
+        
+        // 3. Set the compatSabPanelCount properties for each epitope.
+        for(String locusGroup : locusGroups) {
+            getEpitopeListByEpRegLocusGroup(locusGroup).stream().forEach((epitope) -> {
+                epitope.setCompatSabPanelCountPresent(new Long(epitope.getAlleleMap().values().stream().filter((allele) -> ("+".equals(allele.getCompatStatus()))).count()).intValue());
+                epitope.setCompatSabPanelCountAbsent(new Long(epitope.getAlleleMap().values().stream().filter((allele) -> ("-".equals(allele.getCompatStatus()))).count()).intValue());
+                epitope.setCompatSabPanelCountUnknown(new Long(epitope.getAlleleMap().values().stream().filter((allele) -> ("?".equals(allele.getCompatStatus()))).count()).intValue());
+                if((epitope.getCompatSabPanelCountPresent() + epitope.getCompatSabPanelCountAbsent()) > 0) {
+                    epitope.setCompatSabPantelPctPresent((100 * epitope.getCompatSabPanelCountPresent()) / (epitope.getCompatSabPanelCountPresent() + epitope.getCompatSabPanelCountAbsent()));
+                }
+            });
+        }
+        
     }
     
 }

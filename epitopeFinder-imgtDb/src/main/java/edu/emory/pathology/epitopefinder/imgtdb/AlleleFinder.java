@@ -104,5 +104,12 @@ public class AlleleFinder {
             });
         });
     }
-    
+
+    // This method should only be invoked after epRegEpitope.computeCompatProperties.
+    public void computeCompatProperties(AlleleFinder alleleFinder) {
+        getAlleleList().stream().forEach((allele) -> { allele.setCompatInterpretation(null); });
+        
+        
+    }
+        
 }
