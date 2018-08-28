@@ -79,7 +79,7 @@ alleleFinder.getAlleleByEpRegAlleleName("B*08:01").setRecipientTypeForCompat(tru
 alleleFinder.getAlleleByEpRegAlleleName("B*40:01").setRecipientTypeForCompat(true);
 alleleFinder.getAlleleByEpRegAlleleName("C*03:04").setRecipientTypeForCompat(true);
 alleleFinder.getAlleleByEpRegAlleleName("C*07:01").setRecipientTypeForCompat(true);
-epRegEpitopeFinder.computeCompatInterpretation(alleleFinder);
+epRegEpitopeFinder.computeCompatProperties(alleleFinder);
 
                 ((HttpServletRequest)request).getSession().setAttribute("alleleFinder", alleleFinder);
                 ((HttpServletRequest)request).getSession().setAttribute("sabPanelFinder", sabPanelFinder);
