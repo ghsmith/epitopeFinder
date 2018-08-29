@@ -8,6 +8,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -41,7 +42,12 @@ public class EpRegEpitopeFinder {
     }
 
     public EpRegEpitope getEpitope(String locusGroup, String epitopeName) {
-        return getEpitopeList().stream().filter((epitope) -> (locusGroup.equals(epitope.getLocusGroup()) && epitopeName.equals(epitope.getEpitopeName()))).findFirst().get();
+        try {
+            return getEpitopeList().stream().filter((epitope) -> (locusGroup.equals(epitope.getLocusGroup()) && epitopeName.equals(epitope.getEpitopeName()))).findFirst().get();
+        }
+        catch(NoSuchElementException e) {
+            return null;
+        }
     }
 
     public List<EpRegEpitope> getEpitopeListByEpRegLocusGroup(String locusGroup) {

@@ -3,6 +3,7 @@ package edu.emory.pathology.epitopefinder.imgtdb;
 import edu.emory.pathology.epitopefinder.imgtdb.data.SabPanel;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -24,7 +25,12 @@ public class SabPanelFinder {
     }
 
     public SabPanel getSabPanel(String epRegLocusGroup) {
-        return getSabPanelList().stream().filter((sabPanel) -> (epRegLocusGroup.equals(sabPanel.getEpRegLocusGroup()))).findFirst().get();
+        try {
+            return getSabPanelList().stream().filter((sabPanel) -> (epRegLocusGroup.equals(sabPanel.getEpRegLocusGroup()))).findFirst().get();
+        }
+        catch(NoSuchElementException e) {
+            return null;
+        }
     }
     
     public List<SabPanel> getSabPanelList() {

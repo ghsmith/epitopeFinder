@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -50,11 +51,21 @@ public class AlleleFinder {
     }
     
     public Allele getAllele(String alleleName) {
-        return getAlleleList().stream().filter((allele) -> (alleleName.equals(allele.getAlleleName()))).findFirst().get();
+        try {
+            return getAlleleList().stream().filter((allele) -> (alleleName.equals(allele.getAlleleName()))).findFirst().get();
+        }
+        catch(NoSuchElementException e) {
+            return null;
+        }
     }
     
     public Allele getAlleleByEpRegAlleleName(String epRegAlleleName) {
-        return getAlleleList().stream().filter((allele) -> (epRegAlleleName.equals(allele.getEpRegAlleleName()))).findFirst().get();
+        try {
+            return getAlleleList().stream().filter((allele) -> (epRegAlleleName.equals(allele.getEpRegAlleleName()))).findFirst().get();
+        }
+        catch(NoSuchElementException e) {
+            return null;
+        }
     }
 
     public List<Allele> getAlleleListByEpRegLocusGroup(String epRegLocusGroup) {
@@ -106,9 +117,30 @@ public class AlleleFinder {
     }
 
     // This method should only be invoked after epRegEpitope.computeCompatProperties.
-    public void computeCompatProperties(AlleleFinder alleleFinder) {
+    public void computeCompatProperties(EpRegEpitopeFinder epitopeFinder) {
+
+        // 0. Nullify everything computed.
         getAlleleList().stream().forEach((allele) -> { allele.setCompatInterpretation(null); });
-        
+
+        // 1. Handle auto-antibody (AA).
+        getAlleleList().stream().filter((allele) -> (allele.getRecipientAntibodyForCompat() && allele.getRecipientTypeForCompat())).forEach((allele) -> { allele.setCompatInterpretation("AA"); });
+
+        // 2. Handle incompatible (I).
+        getAlleleList().stream().filter((allele) -> (allele.getRecipientAntibodyForCompat() && !allele.getRecipientTypeForCompat())).forEach((allele) -> { allele.setCompatInterpretation("I"); });
+
+        // 3. Handle likely incompatible (LI).
+        getAlleleList().stream().filter((allele) -> (allele.getCompatInterpretation() == null)).forEach((allele) -> {
+            epitopeFinder.getEpitopeListByEpRegLocusGroup(allele.getEpRegLocusGroup()).stream().filter((epitope) -> (epitope.getCompatSabPanelCountAbsent() == 0)).forEach((epitope) -> {
+                if(epitope.getAlleleMap().values().stream().filter((epitopeAllele) -> (allele.getEpRegAlleleName().equals(epitopeAllele.getEpRegAlleleName()))).findFirst().isPresent()) {
+                    allele.setCompatInterpretation("LI");
+                }
+            });
+        });
+
+        // 4. Handle no evidence of incompatibility (NEI).
+        getAlleleList().stream().filter((allele) -> (allele.getCompatInterpretation() == null)).forEach((allele) -> {
+           allele.setCompatInterpretation("NEI");
+        });
         
     }
         
