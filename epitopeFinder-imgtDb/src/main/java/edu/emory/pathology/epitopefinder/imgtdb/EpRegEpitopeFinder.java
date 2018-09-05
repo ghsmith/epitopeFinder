@@ -104,7 +104,7 @@ public class EpRegEpitopeFinder {
                 }
             }
             // Add sequence number for sorting.
-            int sequenceNumber = 1;
+            int sequenceNumber = 0;
             for(EpRegEpitope epitope : epitopeList) {
                 epitope.setSequenceNumber(sequenceNumber++);
             }
