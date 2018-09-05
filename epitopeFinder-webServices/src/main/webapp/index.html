@@ -218,7 +218,7 @@
 
         <h3>GET /epitopeFinder/resources/epRegEpitopes</h3>
         <p>
-            Returns a JavaScript object notation (JSON) array of HLA Epitope
+            Returns a JSON array of HLA Epitope
             Registry epitopes.
         </p>
         <h4>Query Parameters</h4>
@@ -283,7 +283,7 @@
 
         <h3>GET /epitopeFinder/resources/epRegEpitopes/{locusGroup}</h3>
         <p>
-            Returns a JavaScript object notation (JSON) array of HLA Epitope
+            Returns a JSON array of HLA Epitope
             Registry epitopes in the HLA Epitope Registry locus group (<i>ABC</i>, <i>DRB</i>,
             <i>DQ</i>, <i>DP</i>) identified by the URL parameter {locusGroup}.
         </p>
@@ -349,7 +349,7 @@
 
         <h3>GET /epitopeFinder/resources/epRegEpitopes/{locusGroup}/{epitopeName}</h3>
         <p>
-            Returns a JavaScript object notation (JSON) HLA Epitope
+            Returns a JSON HLA Epitope
             Registry epitope identified by the HLA Epitope Registry locus group (<i>ABC</i>, <i>DRB</i>,
             <i>DQ</i>, <i>DP</i>) {locusGroup} and the epitope name {epitopeName}.
         </p>
@@ -370,7 +370,7 @@
         </table>
         <h4>Example Usage</h4>
         <p>
-            <a id="exampleGetEpitopeLink" href="javascript:void(0);">GET /epitopeFinder/resources/epRegEpitopes/ABC/1C?panelAllelesOnly=true</a>
+            <a id="exampleGetEpitopeLink" href="javascript:void(0);">GET /epitopeFinder/resources/epRegEpitopes/ABC/62GE?panelAllelesOnly=true</a>
             <br/><br/>returns JSON epitope:
             <div class="jsonOutputContainer"><div class="jsonOutputLabel"><div class="jsonOutputLabelText">epRegEpitope</div></div><div id="exampleGetEpitopeOutput" class="jsonOutput"></div></div>
             <script>
@@ -378,7 +378,7 @@
                     $("#exampleGetEpitopeOutput").html("working...");
                     setTimeout(function() {
                     $.ajax({
-                        url: "/epitopeFinder/resources/epRegEpitopes/ABC/1C?panelAllelesOnly=true",
+                        url: "/epitopeFinder/resources/epRegEpitopes/ABC/62GE?panelAllelesOnly=true",
                         dataType: "text"
                     }).done(function(response) {
                         $("#exampleGetEpitopeOutput").JSONView(response, { collapsed: false });
@@ -389,7 +389,7 @@
 
         <h3>GET /epitopeFinder/resources/sabPanels</h3>
         <p>
-            Returns a JavaScript object notation (JSON) array of single antigen
+            Returns a JSON array of single antigen
             bead panels representing the currently active panels. Currently, these
             panels are administratively specified, although in a more complete
             implementation the API will allow the panels to be specified by the
@@ -398,8 +398,8 @@
         <h4>Example Usage</h4>
         <p>
             <a id="exampleGetSabPanelsLink" href="javascript:void(0);">GET /epitopeFinder/resources/sabPanels</a>
-            <br/><br/>returns single antigen bead panel array:
-            <div class="jsonOutputContainer"><div class="jsonOutputLabel"><div class="jsonOutputLabelText">sabPanels[]</div></div><div id="exampleGetSabPanelsOutput" class="jsonOutput"></div></div>
+            <br/><br/>returns JSON single antigen bead panel array:
+            <div class="jsonOutputContainer"><div class="jsonOutputLabel"><div class="jsonOutputLabelText">sabPanel[]</div></div><div id="exampleGetSabPanelsOutput" class="jsonOutput"></div></div>
             <script>
                 $("#exampleGetSabPanelsLink").click(function() {
                     $("#exampleGetSabPanelsOutput").html("working...");
@@ -411,6 +411,31 @@
                         $("#exampleGetSabPanelsOutput").JSONView(response, { collapsed: true });
                         $("#exampleGetSabPanelsOutput").JSONView("expand", 0);
                         $("#exampleGetSabPanelsOutput").JSONView("expand", 1);
+                    });
+                }, 1000)});
+            </script>
+        </p>
+
+        <h3>GET /epitopeFinder/resources/sabPanels/{locusGroup}</h3>
+        <p>
+            Returns a JSON representation of the single antigen
+            bead panel identified by the HLA Epitope Registry locus group (<i>ABC</i>, <i>DRB</i>,
+            <i>DQ</i>, <i>DP</i>) {locusGroup}.
+        </p>
+        <h4>Example Usage</h4>
+        <p>
+            <a id="exampleGetSabPanelLink" href="javascript:void(0);">GET /epitopeFinder/resources/sabPanels/ABC</a>
+            <br/><br/>returns JSON single antigen bead panel:
+            <div class="jsonOutputContainer"><div class="jsonOutputLabel"><div class="jsonOutputLabelText">sabPanel</div></div><div id="exampleGetSabPanelOutput" class="jsonOutput"></div></div>
+            <script>
+                $("#exampleGetSabPanelLink").click(function() {
+                    $("#exampleGetSabPanelOutput").html("working...");
+                    setTimeout(function() {
+                    $.ajax({
+                        url: "/epitopeFinder/resources/sabPanels/ABC",
+                        dataType: "text"
+                    }).done(function(response) {
+                        $("#exampleGetSabPanelOutput").JSONView(response, { collapsed: false });
                     });
                 }, 1000)});
             </script>
