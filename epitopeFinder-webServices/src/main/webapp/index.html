@@ -1,10 +1,455 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Start Page</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=0.86, maximum-scale=3.0, minimum-scale=0.86">
+        <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"/>
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="json/jquery.jsonview.min.css" />
+        <script type="text/javascript" src="json/jquery.jsonview.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/elevatezoom/3.0.8/jquery.elevatezoom.min.js"></script>
+        <style>
+            body {
+                font-family: monospace;
+                font-size: medium;
+            }
+            table {
+                font-family: monospace;
+                font-size: medium;
+            }
+            h2 {
+                margin-top: 40px;
+                border-bottom: 1px solid black;
+            }
+            h3 {
+                margin-top: 30px;
+            }
+            table.parameters {
+                border-spacing: 0px;
+                border-collapse: collapse;
+            }
+            table.parameters th, table.parameters td {
+                border: 1px solid black;
+            }
+            div.jsonOutputContainer {
+                height: 300px;
+                position: relative;
+                white-space: nowrap;
+            }
+            div.jsonOutputLabel {
+                display: inline-block;
+                width: 50px;
+                height: 302px;
+                position: absolute;
+                left: 0px;
+                top: 0px;
+                overflow: hidden;
+                border-right: 5px solid darkgreen;
+                background-color: green;
+            }
+            div.jsonOutputLabelText {
+                display: inline-block;
+                transform: rotate(-90deg);
+                transform-origin: left top;
+                position: relative;
+                left: 20px;
+                bottom: -290px;
+                color: white;
+                font-size: x-large;
+                font-weight: bold;
+            }
+            div.jsonOutput {
+                display: inline-block;
+                min-width: 50%;
+                height: 300px;
+                position: absolute;
+                left: 51px;
+                top: 0px;
+                overflow: scroll;
+                overflow-x: hidden;
+                border: 1px solid gray;
+                background-color: ivory;
+            }
+        </style>
+        <title>HLA Epitope Finder REST API Endpoints</title>
     </head>
     <body>
-        <h1>Hello World!</h1>
+        
+        <div style="text-align: center;">
+            <h1>HLA Epitope Finder REST API Endpoints</h1>
+            <p>DRAFT COPY</p>
+            <p>
+                Geoffrey H. Smith, MD<br/>
+                September 1, 2018<br/>
+                geoffrey.smith@emory.edu<br/>
+            </p>
+        </div>
+        
+        <h2>Disclaimer</h2>
+
+        <p>
+            This project and the services it implements are for research use
+            only.
+        </p>
+
+        <h2>Background</h2>
+
+        <p>
+            This page describes an application programming interface (API)
+            for an HLA epitope reactivity prediction system that uses epitopes
+            defined by the <a href="http://www.epregistry.com.br/">HLA Epitope
+            Registry</a> [REFERENCE]. Compatibility predictions are based on
+            identifying HLA Epitope Registry epitopes where all of the single
+            antigen beads bearing the epitope are positive in a defined single
+            antigen bead panel.
+        </p>
+        
+        <h2>Methods</h2>
+
+        <p>
+            The API is implemented as a set of REpresentational State Transfer
+            (REST) web service endpoints. <a href="#ri">Reference implementations</a>
+            of HTML5 web applications that use the REST API are also provided. The
+            source code for the API and the HTML5 applications is available in
+            GitHub (<a href="https://github.com/ghsmith/epitopeFinder">https://github.com/ghsmith/epitopeFinder</a>).
+            The API is implemented using Java Enterprise Edition components and
+            is deployed on a Java Application Server. To simplify application
+            development, the REST API maintains some state at the level of the
+            HTTP session, but no state is durably persisted across HTTP
+            sessions.
+        </p>
+        
+        <h2>Resources</h2>
+
+        <h3>GET /epitopeFinder/resources/alleles</h3>
+        <p>
+            Returns a JavaScript object notation (JSON) array of HLA alleles
+            in the IMGT database corresponding to the HLA Epitope Registry
+            locus groups <i>ABC</i> (HLA-A, B, C), <i>DRB</i> (HLA-DRB1, 2, 3, 4,
+            &amp; 5), <i>DQ</i> (HLA-DQB1 &amp; A1), and <i>DP</i> (HLA-DPB1 &amp;
+            A1). Only the first allele in the IMGT database corresponding to a
+            set of synonymous alleles is returned.
+        </p>
+        <h4>Query Parameters</h4>
+        <table class="parameters">
+            <tr><th>name</th><th>required</th><th>type</th><th>description</th><th>default</th><th>example</th></tr>
+            <tr>
+                <td>locusGroup</td>
+                <td>no</td>
+                <td>String</td>
+                <td>
+                    Only return alleles in the HLA Epitope Registry locus group
+                    (<i>ABC</i>, <i>DRB</i>, <i>DQ</i>, <i>DP</i>).
+                </td>
+                <td>none</td>
+                <td>startSequenceNumber=0</td>
+            </tr>
+            <tr>
+                <td>startSequenceNumber</td>
+                <td>no</td>
+                <td>int</td>
+                <td>
+                    Alleles are sorted as they are in the IMGT database. Only
+                    alleles with a zero-based index greater than or equal to
+                    this number are returned.
+                </td>
+                <td>none</td>
+                <td>startSequenceNumber=0</td>
+            </tr>
+            <tr>
+                <td>endSequenceNumber</td>
+                <td>no</td>
+                <td>int</td>
+                <td>
+                    Alleles are sorted as they are in the IMGT database. Only
+                    alleles with a zero-based index less than
+                    this number are returned.
+                </td>
+                <td>none</td>
+                <td>endSequenceNumber=10</td>
+            </tr>
+        </table>
+        <h4>Example Usage</h4>
+        <p>
+            <a id="exampleGetAllelesLink" href="javascript:void(0);">GET /epitopeFinder/resources/alleles?startSequenceNumber=0&endSequenceNumber=10</a>
+            <br/><br/>returns JSON allele array:
+            <div class="jsonOutputContainer"><div class="jsonOutputLabel"><div class="jsonOutputLabelText">allele[]</div></div><div id="exampleGetAllelesOutput" class="jsonOutput"></div></div>
+            <script>
+                $("#exampleGetAllelesLink").click(function() {
+                    $("#exampleGetAllelesOutput").html("working...");
+                    setTimeout(function() {
+                    $.ajax({
+                        url: "/epitopeFinder/resources/alleles?startSequenceNumber=0&endSequenceNumber=10",
+                        dataType: "text"
+                    }).done(function(response) {
+                        $("#exampleGetAllelesOutput").JSONView(response, { collapsed: true });
+                        $("#exampleGetAllelesOutput").JSONView("expand", 0);
+                        $("#exampleGetAllelesOutput").JSONView("expand", 1);
+                    });
+                }, 1000)});
+            </script>
+        </p>
+        
+        <h3>GET /epitopeFinder/resources/alleles/{alleleName}</h3>
+        <p>
+            Returns a JSON representation of the allele identified by URL
+            parameter {alleleName}. If the allele name can't be resolved as an
+            full IMGT allele names (e.g., HLA-A*01:01:01:01), the system will
+            try to resolve it as an HLA Epitope Registry allele name (e.g., A*01:01).
+        </p>
+        <h4>Example Usage</h4>
+        <p>
+            <a id="exampleGetAlleleLink" href="javascript:void(0);">GET /epitopeFinder/resources/alleles/HLA-DPB1*01:01:01:01</a>
+            <br/><br/>returns JSON allele:
+            <div class="jsonOutputContainer"><div class="jsonOutputLabel"><div class="jsonOutputLabelText">allele</div></div><div id="exampleGetAlleleOutput" class="jsonOutput"></div></div>
+            <script>
+                $("#exampleGetAlleleLink").click(function() {
+                    $("#exampleGetAlleleOutput").html("working...");
+                    setTimeout(function() {
+                    $.ajax({
+                        url: "/epitopeFinder/resources/alleles/HLA-DPB1*01:01:01:01",
+                        dataType: "text"
+                    }).done(function(response) {
+                        $("#exampleGetAlleleOutput").JSONView(response, { collapsed: false });
+                    });
+                }, 1000)});
+            </script>
+        </p>
+
+        <h3>GET /epitopeFinder/resources/epRegEpitopes</h3>
+        <p>
+            Returns a JavaScript object notation (JSON) array of HLA Epitope
+            Registry epitopes.
+        </p>
+        <h4>Query Parameters</h4>
+        <table class="parameters">
+            <tr><th>name</th><th>required</th><th>type</th><th>description</th><th>default</th><th>example</th></tr>
+            <tr>
+                <td>panelAllelesOnly</td>
+                <td>no</td>
+                <td>boolean</td>
+                <td>
+                    Only return alleles associated with the epitope that are
+                    part of a single antigen bead panel.
+                </td>
+                <td>false</td>
+                <td>panelAllelesOnly=true</td>
+            </tr>
+            <tr>
+                <td>startSequenceNumber</td>
+                <td>no</td>
+                <td>int</td>
+                <td>
+                    Epitopes are sorted as they are in the HLA Epitope Registry database. Only
+                    epitopes with a zero-based index greater than or equal to
+                    this number are returned.
+                </td>
+                <td>none</td>
+                <td>startSequenceNumber=0</td>
+            </tr>
+            <tr>
+                <td>endSequenceNumber</td>
+                <td>no</td>
+                <td>int</td>
+                <td>
+                    Epitopes are sorted as they are in the HLA Epitope Registry database. Only
+                    epitopes with a zero-based index greater than
+                    this number are returned.
+                </td>
+                <td>none</td>
+                <td>endSequenceNumber=10</td>
+            </tr>
+        </table>
+        <h4>Example Usage</h4>
+        <p>
+            <a id="exampleGetEpitopesLink" href="javascript:void(0);">GET /epitopeFinder/resources/epRegEpitopes?panelAllelesOnly=true&startSequenceNumber=0&endSequenceNumber=10</a>
+            <br/><br/>returns JSON epitope array:
+            <div class="jsonOutputContainer"><div class="jsonOutputLabel"><div class="jsonOutputLabelText">epRegEpitope[]</div></div><div id="exampleGetEpitopesOutput" class="jsonOutput"></div></div>
+            <script>
+                $("#exampleGetEpitopesLink").click(function() {
+                    $("#exampleGetEpitopesOutput").html("working...");
+                    setTimeout(function() {
+                    $.ajax({
+                        url: "/epitopeFinder/resources/epRegEpitopes?panelAllelesOnly=true&startSequenceNumber=0&endSequenceNumber=10",
+                        dataType: "text"
+                    }).done(function(response) {
+                        $("#exampleGetEpitopesOutput").JSONView(response, { collapsed: true });
+                        $("#exampleGetEpitopesOutput").JSONView("expand", 0);
+                        $("#exampleGetEpitopesOutput").JSONView("expand", 1);
+                    });
+                }, 1000)});
+            </script>
+        </p>
+
+        <h3>GET /epitopeFinder/resources/epRegEpitopes/{locusGroup}</h3>
+        <p>
+            Returns a JavaScript object notation (JSON) array of HLA Epitope
+            Registry epitopes in the HLA Epitope Registry locus group (<i>ABC</i>, <i>DRB</i>,
+            <i>DQ</i>, <i>DP</i>) identified by the URL parameter {locusGroup}.
+        </p>
+        <h4>Query Parameters</h4>
+        <table class="parameters">
+            <tr><th>name</th><th>required</th><th>type</th><th>description</th><th>default</th><th>example</th></tr>
+            <tr>
+                <td>panelAllelesOnly</td>
+                <td>no</td>
+                <td>boolean</td>
+                <td>
+                    Only return alleles associated with the epitope that are
+                    part of a single antigen bead panel.
+                </td>
+                <td>false</td>
+                <td>panelAllelesOnly=true</td>
+            </tr>
+            <tr>
+                <td>startSequenceNumber</td>
+                <td>no</td>
+                <td>int</td>
+                <td>
+                    Epitopes are sorted as they are in the HLA Epitope Registry database. Only
+                    epitopes with a zero-based index greater than or equal to
+                    this number are returned.
+                </td>
+                <td>none</td>
+                <td>startSequenceNumber=0</td>
+            </tr>
+            <tr>
+                <td>endSequenceNumber</td>
+                <td>no</td>
+                <td>int</td>
+                <td>
+                    Epitopes are sorted as they are in the HLA Epitope Registry database. Only
+                    epitopes with a zero-based index greater than
+                    this number are returned.
+                </td>
+                <td>none</td>
+                <td>endSequenceNumber=10</td>
+            </tr>
+        </table>
+        <h4>Example Usage</h4>
+        <p>
+            <a id="exampleGetEpitopesLocusGroupLink" href="javascript:void(0);">GET /epitopeFinder/resources/epRegEpitopes/ABC?panelAllelesOnly=true&startSequenceNumber=0&endSequenceNumber=10</a>
+            <br/><br/>returns JSON epitope array:
+            <div class="jsonOutputContainer"><div class="jsonOutputLabel"><div class="jsonOutputLabelText">epRegEpitope[]</div></div><div id="exampleGetEpitopesLocusGroupOutput" class="jsonOutput"></div></div>
+            <script>
+                $("#exampleGetEpitopesLocusGroupLink").click(function() {
+                    $("#exampleGetEpitopesLocusGroupOutput").html("working...");
+                    setTimeout(function() {
+                    $.ajax({
+                        url: "/epitopeFinder/resources/epRegEpitopes/ABC?panelAllelesOnly=true&startSequenceNumber=0&endSequenceNumber=10",
+                        dataType: "text"
+                    }).done(function(response) {
+                        $("#exampleGetEpitopesLocusGroupOutput").JSONView(response, { collapsed: true });
+                        $("#exampleGetEpitopesLocusGroupOutput").JSONView("expand", 0);
+                        $("#exampleGetEpitopesLocusGroupOutput").JSONView("expand", 1);
+                    });
+                }, 1000)});
+            </script>
+        </p>
+
+        <h3>GET /epitopeFinder/resources/epRegEpitopes/{locusGroup}/{epitopeName}</h3>
+        <p>
+            Returns a JavaScript object notation (JSON) HLA Epitope
+            Registry epitope identified by the HLA Epitope Registry locus group (<i>ABC</i>, <i>DRB</i>,
+            <i>DQ</i>, <i>DP</i>) {locusGroup} and the epitope name {epitopeName}.
+        </p>
+        <h4>Query Parameters</h4>
+        <table class="parameters">
+            <tr><th>name</th><th>required</th><th>type</th><th>description</th><th>default</th><th>example</th></tr>
+            <tr>
+                <td>panelAllelesOnly</td>
+                <td>no</td>
+                <td>boolean</td>
+                <td>
+                    Only return alleles associated with the epitope that are
+                    part of a single antigen bead panel.
+                </td>
+                <td>false</td>
+                <td>panelAllelesOnly=true</td>
+            </tr>
+        </table>
+        <h4>Example Usage</h4>
+        <p>
+            <a id="exampleGetEpitopeLink" href="javascript:void(0);">GET /epitopeFinder/resources/epRegEpitopes/ABC/1C?panelAllelesOnly=true</a>
+            <br/><br/>returns JSON epitope:
+            <div class="jsonOutputContainer"><div class="jsonOutputLabel"><div class="jsonOutputLabelText">epRegEpitope</div></div><div id="exampleGetEpitopeOutput" class="jsonOutput"></div></div>
+            <script>
+                $("#exampleGetEpitopeLink").click(function() {
+                    $("#exampleGetEpitopeOutput").html("working...");
+                    setTimeout(function() {
+                    $.ajax({
+                        url: "/epitopeFinder/resources/epRegEpitopes/ABC/1C?panelAllelesOnly=true",
+                        dataType: "text"
+                    }).done(function(response) {
+                        $("#exampleGetEpitopeOutput").JSONView(response, { collapsed: false });
+                    });
+                }, 1000)});
+            </script>
+        </p>
+
+        <h3>GET /epitopeFinder/resources/sabPanels</h3>
+        <p>
+            Returns a JavaScript object notation (JSON) array of single antigen
+            bead panels representing the currently active panels. Currently, these
+            panels are administratively specified, although in a more complete
+            implementation the API will allow the panels to be specified by the
+            client.
+        </p>
+        <h4>Example Usage</h4>
+        <p>
+            <a id="exampleGetSabPanelsLink" href="javascript:void(0);">GET /epitopeFinder/resources/sabPanels</a>
+            <br/><br/>returns single antigen bead panel array:
+            <div class="jsonOutputContainer"><div class="jsonOutputLabel"><div class="jsonOutputLabelText">sabPanels[]</div></div><div id="exampleGetSabPanelsOutput" class="jsonOutput"></div></div>
+            <script>
+                $("#exampleGetSabPanelsLink").click(function() {
+                    $("#exampleGetSabPanelsOutput").html("working...");
+                    setTimeout(function() {
+                    $.ajax({
+                        url: "/epitopeFinder/resources/sabPanels",
+                        dataType: "text"
+                    }).done(function(response) {
+                        $("#exampleGetSabPanelsOutput").JSONView(response, { collapsed: true });
+                        $("#exampleGetSabPanelsOutput").JSONView("expand", 0);
+                        $("#exampleGetSabPanelsOutput").JSONView("expand", 1);
+                    });
+                }, 1000)});
+            </script>
+        </p>
+
+        <h3>GET /hladpb1/session</h3>
+        <p>
+            Returns a JSON representation of the current session ID. All changes
+            (e.g., clinical information such as antibody profile) are persisted
+            in the session and are disposed of when the session ends. Sessions
+            automatically time out after 30 minutes. This method takes no
+            parameters.
+        </p>
+        <h4>Example Usage</h4>
+        <p>
+            <a id="exampleGetSessionLink" href="javascript:void(0);">GET /hladpb1/resources/session</a>
+            <br/><br/>returns JSON sessionId:
+            <div class="jsonOutputContainer"><div class="jsonOutputLabel"><div class="jsonOutputLabelText">sessionId</div></div><div id="exampleGetSessionOutput" class="jsonOutput"></div></div>
+            <script>
+                $("#exampleGetSessionLink").click(function() {
+                    $("#exampleGetSessionOutput").html("working...");
+                    setTimeout(function() {
+                    $.ajax({
+                        url: "/hladpb1/resources/session",
+                        dataType: "text"
+                    }).done(function(response) {
+                        $("#exampleGetSessionOutput").html(response);
+                    });
+                }, 1000)});
+            </script>
+        </p>
+
+        <h3>PUT /hladpb1/session/reset</h3>
+        <p>
+            End the current session. All changes are immediately disposed. This
+            request has no payload.
+        </p>
+        
+        <p><br/>Copyright &copy; 2018, Geoffrey H. Smith, MD
+        
     </body>
 </html>

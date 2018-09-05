@@ -4,6 +4,7 @@ import edu.emory.pathology.epitopefinder.imgtdb.data.EpRegEpitope;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -21,7 +22,7 @@ public class EpRegEpitopes {
 
     @GET
     @Produces("application/json")
-    public List<EpRegEpitope> getJson(@QueryParam("panelAllelesOnly") String panelAllelesOnly) {
+    public List<EpRegEpitope> getJson(@QueryParam("panelAllelesOnly") String panelAllelesOnly, @DefaultValue("-1") @QueryParam("startSequenceNumber") int startSequenceNumber, @DefaultValue("-1") @QueryParam("endSequenceNumber") int endSequenceNumber) {
         List<EpRegEpitope> epitopes = SessionFilter.epRegEpitopeFinder.get().getEpitopeList();
         // panelAllelesOnly saves bandwidth
         if("true".equals(panelAllelesOnly)) {
@@ -36,13 +37,16 @@ public class EpRegEpitopes {
                 alleleNameRemoveList.stream().forEach((alleleName) -> epitope.getAlleleMap().remove(alleleName));
             });
         }
+        if(startSequenceNumber != -1 || endSequenceNumber != -1) {
+            epitopes = epitopes.subList(startSequenceNumber, endSequenceNumber);
+        }
         return epitopes;
     }
     
     @GET
     @Path("{locusGroup}")
     @Produces("application/json")
-    public List<EpRegEpitope> getJson(@PathParam("locusGroup") String locusGroup, @QueryParam("panelAllelesOnly") String panelAllelesOnly) {
+    public List<EpRegEpitope> getJson(@PathParam("locusGroup") String locusGroup, @QueryParam("panelAllelesOnly") String panelAllelesOnly, @DefaultValue("-1") @QueryParam("startSequenceNumber") int startSequenceNumber, @DefaultValue("-1") @QueryParam("endSequenceNumber") int endSequenceNumber) {
         List<EpRegEpitope> epitopes = SessionFilter.epRegEpitopeFinder.get().getEpitopeListByEpRegLocusGroup(locusGroup);
         // panelAllelesOnly saves bandwidth
         if("true".equals(panelAllelesOnly)) {
@@ -56,6 +60,9 @@ public class EpRegEpitopes {
                 });
                 alleleNameRemoveList.stream().forEach((alleleName) -> epitope.getAlleleMap().remove(alleleName));
             });
+        }
+        if(startSequenceNumber != -1 || endSequenceNumber != -1) {
+            epitopes = epitopes.subList(startSequenceNumber, endSequenceNumber);
         }
         return epitopes;
     }
