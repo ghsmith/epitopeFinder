@@ -1,11 +1,13 @@
 package edu.emory.pathology.epitopefinder.imgtdb;
 
 import edu.emory.pathology.epitopefinder.imgtdb.data.Allele;
+import edu.emory.pathology.epitopefinder.imgtdb.data.Allele.AlleleEpRegEpitopeRef;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.TreeMap;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -94,6 +96,7 @@ public class AlleleFinder {
                             allele.setAlleleName(imgtAllele.getName());
                             allele.setEpRegLocusGroup(epRegLocusGroup);
                             allele.setEpRegAlleleName(epRegAlleleName);
+                            allele.setCompatEpRegEpitopeMap(new TreeMap<>());
                         }
                     }
                 }
@@ -120,6 +123,7 @@ public class AlleleFinder {
     public void computeCompatProperties(EpRegEpitopeFinder epitopeFinder) {
 
         // 0. Nullify everything computed.
+        getAlleleList().stream().forEach((allele) -> { allele.getCompatEpRegEpitopeMap().clear(); });
         getAlleleList().stream().forEach((allele) -> { allele.setCompatInterpretation(null); });
 
         // 1. Handle auto-antibody (AA).
@@ -128,18 +132,28 @@ public class AlleleFinder {
         // 2. Handle incompatible (I).
         getAlleleList().stream().filter((allele) -> (allele.getRecipientAntibodyForCompat() && !allele.getRecipientTypeForCompat())).forEach((allele) -> { allele.setCompatInterpretation("I"); });
 
-        // 3. Handle likely incompatible (LI).
+        // 3. Handle electronically incompatible (EI).
         getAlleleList().stream().filter((allele) -> (allele.getCompatInterpretation() == null)).forEach((allele) -> {
-            epitopeFinder.getEpitopeListByEpRegLocusGroup(allele.getEpRegLocusGroup()).stream().filter((epitope) -> (epitope.getCompatSabPanelCountAbsent() == 0)).forEach((epitope) -> {
+            epitopeFinder.getEpitopeListByEpRegLocusGroup(allele.getEpRegLocusGroup()).stream().filter((epitope) -> (epitope.getCompatSabPantelPctPresent() != null && epitope.getCompatSabPantelPctPresent() == 100)).forEach((epitope) -> {
                 if(epitope.getAlleleMap().values().stream().filter((epitopeAllele) -> (allele.getEpRegAlleleName().equals(epitopeAllele.getEpRegAlleleName()))).findFirst().isPresent()) {
-                    allele.setCompatInterpretation("LI");
+                    allele.setCompatInterpretation("EI");
                 }
             });
         });
 
-        // 4. Handle no evidence of incompatibility (NEI).
+        // 4. Handle not electronically incompatible (NEI).
         getAlleleList().stream().filter((allele) -> (allele.getCompatInterpretation() == null)).forEach((allele) -> {
            allele.setCompatInterpretation("NEI");
+        });
+        
+        // 5. Set the epitope map up.
+        epitopeFinder.getEpitopeList().stream().filter((epitope) -> (epitope.getCompatSabPantelPctPresent() != null && epitope.getCompatSabPantelPctPresent() > 0)).forEach((epitope) -> {
+            epitope.getAlleleMap().values().stream().forEach((alleleRef) -> {
+                AlleleEpRegEpitopeRef alleleEpRegEpitopeRef = new Allele.AlleleEpRegEpitopeRef();
+                alleleEpRegEpitopeRef.setEpitopeName(epitope.getEpitopeName());
+                alleleEpRegEpitopeRef.setCompatSabPanelPctPresent(epitope.getCompatSabPantelPctPresent());
+                getAlleleByEpRegAlleleName(alleleRef.getEpRegAlleleName()).getCompatEpRegEpitopeMap().put(epitope.getEpitopeName(), alleleEpRegEpitopeRef);
+            });
         });
         
     }

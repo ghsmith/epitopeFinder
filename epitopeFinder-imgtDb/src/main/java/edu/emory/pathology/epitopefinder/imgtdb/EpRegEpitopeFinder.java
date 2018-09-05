@@ -148,7 +148,7 @@ public class EpRegEpitopeFinder {
                         EpRegEpitope.EpRegEpitopeAlleleFilterRef alleleFilter = new EpRegEpitope.EpRegEpitopeAlleleFilterRef();
                         epitope.getCompatAlleleFilterMap().put(alleleSab.getEpRegAlleleName(), alleleFilter);
                         alleleFilter.setSourceUrl(url.toString());
-                        alleleFilter.setEpRegReactiveAlleleName(alleleSab.getEpRegAlleleName());
+                        alleleFilter.setReactiveEpRegAlleleName(alleleSab.getEpRegAlleleName());
                     }
                 }
                 catch (MalformedURLException e) {
@@ -166,7 +166,7 @@ public class EpRegEpitopeFinder {
         for(String locusGroup : locusGroups) {
             getEpitopeListByEpRegLocusGroup(locusGroup).stream().forEach((epitope) -> {
                 epitope.getAlleleMap().values().stream().filter((allele) -> (allele.getInCurrentSabPanel() || allele.getInEpRegSabPanel())).forEach((allele) -> {
-                    if(epitope.getCompatAlleleFilterMap().values().stream().filter((alleleFilter) -> (allele.getEpRegAlleleName().equals(alleleFilter.getEpRegReactiveAlleleName()))).findFirst().isPresent()) {
+                    if(epitope.getCompatAlleleFilterMap().values().stream().filter((alleleFilter) -> (allele.getEpRegAlleleName().equals(alleleFilter.getReactiveEpRegAlleleName()))).findFirst().isPresent()) {
                         allele.setCompatStatus("+"); // bead is positive
                     }
                     else {

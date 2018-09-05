@@ -53,7 +53,7 @@ public class EpRegEpitope implements Serializable {
     public static class EpRegEpitopeAlleleFilterRef implements Serializable {
         
         private String sourceUrl;
-        private String epRegReactiveAlleleName;
+        private String reactiveEpRegAlleleName;
 
         public String getSourceUrl() {
             return sourceUrl;
@@ -63,14 +63,14 @@ public class EpRegEpitope implements Serializable {
             this.sourceUrl = sourceUrl;
         }
 
-        public String getEpRegReactiveAlleleName() {
-            return epRegReactiveAlleleName;
+        public String getReactiveEpRegAlleleName() {
+            return reactiveEpRegAlleleName;
         }
 
-        public void setEpRegReactiveAlleleName(String epRegReactiveAlleleName) {
-            this.epRegReactiveAlleleName = epRegReactiveAlleleName;
+        public void setReactiveEpRegAlleleName(String reactiveEpRegAlleleName) {
+            this.reactiveEpRegAlleleName = reactiveEpRegAlleleName;
         }
-        
+
     }
     
     private Integer sequenceNumber;

@@ -1,7 +1,7 @@
 package edu.emory.pathology.epitopefinder.imgtdb.data;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.SortedMap;
 
 /**
  * Data class for an allele.
@@ -9,17 +9,40 @@ import java.util.List;
  */
 public class Allele implements Serializable {
 
+    public static class AlleleEpRegEpitopeRef implements Serializable {
+        
+        private String epitopeName;
+        private Integer compatSabPanelPctPresent;
+
+        public String getEpitopeName() {
+            return epitopeName;
+        }
+
+        public void setEpitopeName(String epitopeName) {
+            this.epitopeName = epitopeName;
+        }
+
+        public Integer getCompatSabPanelPctPresent() {
+            return compatSabPanelPctPresent;
+        }
+
+        public void setCompatSabPanelPctPresent(Integer compatSabPanelPctPresent) {
+            this.compatSabPanelPctPresent = compatSabPanelPctPresent;
+        }
+        
+    }
+        
     private Integer sequenceNumber;
     private String version;
     private String alleleName;
     private String epRegLocusGroup;
     private String epRegAlleleName;
-    private List<String> epRegEpitopeNameList;
     private Boolean inCurrentSabPanel;
     private Boolean inEpRegSabPanel;
     private Boolean recipientAntibodyForCompat = false;
     private Boolean recipientTypeForCompat = false;
     private Boolean donorTypeForCompat = false;
+    private SortedMap<String, AlleleEpRegEpitopeRef> compatEpRegEpitopeMap;
     private String compatInterpretation;
 
     public Integer getSequenceNumber() {
@@ -62,14 +85,6 @@ public class Allele implements Serializable {
         this.epRegAlleleName = epRegAlleleName;
     }
 
-    public List<String> getEpRegEpitopeNameList() {
-        return epRegEpitopeNameList;
-    }
-
-    public void setEpRegEpitopeNameList(List<String> epRegEpitopeNameList) {
-        this.epRegEpitopeNameList = epRegEpitopeNameList;
-    }
-
     public Boolean getInCurrentSabPanel() {
         return inCurrentSabPanel;
     }
@@ -108,6 +123,14 @@ public class Allele implements Serializable {
 
     public void setDonorTypeForCompat(Boolean donorTypeForCompat) {
         this.donorTypeForCompat = donorTypeForCompat;
+    }
+
+    public SortedMap<String, AlleleEpRegEpitopeRef> getCompatEpRegEpitopeMap() {
+        return compatEpRegEpitopeMap;
+    }
+
+    public void setCompatEpRegEpitopeMap(SortedMap<String, AlleleEpRegEpitopeRef> compatEpRegEpitopeMap) {
+        this.compatEpRegEpitopeMap = compatEpRegEpitopeMap;
     }
 
     public String getCompatInterpretation() {
