@@ -128,7 +128,7 @@ public class EpRegEpitopeFinder {
         getEpitopeList().stream().forEach((epitope) -> { epitope.setCompatSabPanelCountPresent(null);
                                                          epitope.setCompatSabPanelCountAbsent(null);
                                                          epitope.setCompatSabPanelCountUnknown(null);
-                                                         epitope.setCompatSabPantelPctPresent(null); });
+                                                         epitope.setCompatSabPanelPctPresent(null); });
         
         // 1. Query the filtered epitopes from the epitope registry, one query
         //    per recipient antibody.
@@ -188,7 +188,7 @@ public class EpRegEpitopeFinder {
                 epitope.setCompatSabPanelCountAbsent(new Long(epitope.getAlleleMap().values().stream().filter((allele) -> ("-".equals(allele.getCompatStatus()))).count()).intValue());
                 epitope.setCompatSabPanelCountUnknown(new Long(epitope.getAlleleMap().values().stream().filter((allele) -> ("?".equals(allele.getCompatStatus()))).count()).intValue());
                 if((epitope.getCompatSabPanelCountPresent() + epitope.getCompatSabPanelCountAbsent()) > 0) {
-                    epitope.setCompatSabPantelPctPresent((100 * epitope.getCompatSabPanelCountPresent()) / (epitope.getCompatSabPanelCountPresent() + epitope.getCompatSabPanelCountAbsent()));
+                    epitope.setCompatSabPanelPctPresent((100 * epitope.getCompatSabPanelCountPresent()) / (epitope.getCompatSabPanelCountPresent() + epitope.getCompatSabPanelCountAbsent()));
                 }
             });
         }

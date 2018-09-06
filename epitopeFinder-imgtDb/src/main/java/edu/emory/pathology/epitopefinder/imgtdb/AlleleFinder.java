@@ -134,7 +134,7 @@ public class AlleleFinder {
 
         // 3. Handle electronically incompatible (EI).
         getAlleleList().stream().filter((allele) -> (allele.getCompatInterpretation() == null)).forEach((allele) -> {
-            epitopeFinder.getEpitopeListByEpRegLocusGroup(allele.getEpRegLocusGroup()).stream().filter((epitope) -> (epitope.getCompatSabPantelPctPresent() != null && epitope.getCompatSabPantelPctPresent() == 100)).forEach((epitope) -> {
+            epitopeFinder.getEpitopeListByEpRegLocusGroup(allele.getEpRegLocusGroup()).stream().filter((epitope) -> (epitope.getCompatSabPanelPctPresent() != null && epitope.getCompatSabPanelPctPresent() == 100)).forEach((epitope) -> {
                 if(epitope.getAlleleMap().values().stream().filter((epitopeAllele) -> (allele.getEpRegAlleleName().equals(epitopeAllele.getEpRegAlleleName()))).findFirst().isPresent()) {
                     allele.setCompatInterpretation("EI");
                 }
@@ -147,11 +147,11 @@ public class AlleleFinder {
         });
         
         // 5. Set the epitope map up.
-        epitopeFinder.getEpitopeList().stream().filter((epitope) -> (epitope.getCompatSabPantelPctPresent() != null && epitope.getCompatSabPantelPctPresent() > 0)).forEach((epitope) -> {
+        epitopeFinder.getEpitopeList().stream().filter((epitope) -> (epitope.getCompatSabPanelPctPresent() != null && epitope.getCompatSabPanelPctPresent() > 0)).forEach((epitope) -> {
             epitope.getAlleleMap().values().stream().forEach((alleleRef) -> {
                 AlleleEpRegEpitopeRef alleleEpRegEpitopeRef = new Allele.AlleleEpRegEpitopeRef();
                 alleleEpRegEpitopeRef.setEpitopeName(epitope.getEpitopeName());
-                alleleEpRegEpitopeRef.setCompatSabPanelPctPresent(epitope.getCompatSabPantelPctPresent());
+                alleleEpRegEpitopeRef.setCompatSabPanelPctPresent(epitope.getCompatSabPanelPctPresent());
                 getAlleleByEpRegAlleleName(alleleRef.getEpRegAlleleName()).getCompatEpRegEpitopeMap().put(epitope.getEpitopeName(), alleleEpRegEpitopeRef);
             });
         });
