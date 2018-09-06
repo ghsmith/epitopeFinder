@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+
+
+<html>
+
+<head>
+
+<meta name="viewport" content="width=device-width, initial-scale=0.86, maximum-scale=3.0, minimum-scale=0.86">
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"/>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microplugin/0.0.3/microplugin.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sifter/0.5.3/sifter.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.default.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/selectize.js"></script>
+
+<style>
+           
+body {
+    font-family: monospace;
+    font-size: medium;
+}
+
+.selectize-input {
+    border: 1px solid black;
+}
+
+</style>
+
+<title>HLA Epitope Report</title>
+
+</head>
+
+<body>
+
+    <div id="working" style="position: fixed; top: 0px; width: 150px; left: 50%; margin-left: -75px; text-align: center; background-color: red; color: white; font-weight: bold;">working...</div>
+
+    <h1>HLA Epitope Report (<a href="https://github.com/ghsmith/epitopeFinder/blob/master/epitopeFinder-webServices/src/main/webapp/ajaxEpitopeReport.html">source code</a>)</h1>
+    
+    <p style="font-weight: bold; font-size: large;">This report uses epitopes defined in the <a href="http://www.epregistry.com.br/">HLA Epitope Registry</a>.</p>
+
+    <p>
+        Locus Group:
+        <br/><select id="selectLocusGroup"></select>
+    </p>
+
+    <p>
+        Recipient antibodies (multiple selections allowed, type to filter allele list):
+        <br/><select id="selectAllelesAntibody" multiple="true" size="1"></select>
+    </p>
+
+    <p>
+        Recipient HLA Type (multiple selections allowed, type to filter allele list):
+        <br/><select id="selectAllelesRecipientType" multiple="true" size="1"></select>
+    </p>
+    
+    <p><br/>Copyright &copy; 2018, Geoffrey H. Smith, MD
+
+</body>
+
+</html>
+
+<script>
+
+var sessionId;
+var locusGroups = [ {lgName: "ABC"}, {lgName: "DRB"}, {lgName: "DQ"}, {lgName: "DP"} ];
+var alleles; // the array of alleles
+
+function getSessionId() {
+    $("#working").show();
+    return $.ajax({
+        url: "/epitopeFinder/resources/session",
+        dataType: "text"
+    }).then(function(response) {
+        sessionId = response;
+    });
+}
+
+function resetSession() {
+    $("#working").show();
+    return $.ajax({
+        url: "/epitopeFinder/resources/session/reset",
+        dataType: "json",
+        type: "PUT",
+        contentType: "application/json"
+    });
+}
+
+function getAlleles() {
+    $("#working").show();
+    return $.ajax({
+        url: "/epitopeFinder/resources/alleles?locusGroup=" + $("#selectLocusGroup").val(),
+        dataType: "json"
+    }).then(function(response) {
+        alleles = response;
+    });
+}
+
+function putAllele(allele) {
+    $("#working").show();
+    return $.ajax({
+        url: "/hladpb1/resources/alleles/" + allele.alleleName,
+        dataType: "json",
+        type: "PUT",
+        contentType: "application/json",
+        data: JSON.stringify(allele)
+    });
+}
+
+// Document ready! Let's go...
+$(document).ready(function() {
+
+    $("#working").show();
+    getSessionId()
+    .then(function() {
+         $('#selectLocusGroup').selectize({ options: locusGroups, valueField: "lgName", labelField: "lgName", items: ["ABC"] });
+    })
+    .then(getAlleles)
+    .then(function() {
+        $('#selectAllelesAntibody').selectize({ maxItems: 10, maxOptions: 10000, placeholder: "no recipient antibodies selected", plugins: ['remove_button'], options: alleles, valueField: "epRegAlleleName", labelField: "epRegAlleleName", searchField: "epRegAlleleName" });
+        $('#selectAllelesRecipientType').selectize({ maxItems: 10, maxOptions: 10000, placeholder: "no recipient HLA type selected", plugins: ['remove_button'], options: alleles, valueField: "epRegAlleleName", labelField: "epRegAlleleName", searchField: "epRegAlleleName" });
+    })
+    .done(function() {
+        $("#working").hide();
+    });
+
+    $("#selectLocusGroup").change(function() {
+        $("#working").show();
+        getAlleles()
+        .then(function() {
+            {
+                var s = $("#selectAllelesAntibody")[0].selectize;
+                s.clear();
+                s.clearOptions();
+                s.load(function(callback) { callback(alleles); });
+            }
+            {
+                var s = $("#selectAllelesRecipientType")[0].selectize;
+                s.clear();
+                s.clearOptions();
+                s.load(function(callback) { callback(alleles); });
+            }
+        })              
+        .done(function() {
+            $("#working").hide();
+        });
+    });
+        
+});
+
+</script>

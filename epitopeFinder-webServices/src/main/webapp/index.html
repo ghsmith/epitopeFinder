@@ -19,7 +19,10 @@
             }
             h2 {
                 margin-top: 40px;
-                border-bottom: 3px solid black;
+                border: 1px solid black;
+                color: white;
+                background-color: green;
+                font-size: xx-large;
             }
             h3 {
                 margin-top: 30px;
@@ -527,6 +530,30 @@
         <p>
             Compute the compatibility interpretations for all alleles. See
             <i>PUT /epitopeFinder/allele/{alleleName}</i> above.
+        </p>
+
+        <h2 id="ri">Reference Implementations of Applications that use the REST API</h2>
+
+        <p>
+            These applications demonstrate how the HLA Epitope Finder REST API may be used
+            to prognosticate about HLA donor/recipient compatibility. They
+            are presented in order of increasing complexity. Although these
+            applications have some utility in their own right, they are mainly
+            intended to serve as a guide to software engineers seeking to use
+            the HLA Epitope Finder REST API in a larger system, such as in a specialty
+            HLA laboratory information system or in a clinical decision support
+            module of an electronic medical record system.
+        </p>
+
+        <h3><a href="/epitopeFinder/ajaxEpitopeReport.html">HLA-DPB1 Allele Difference Report</a></h3>
+        <p>
+            This report shows the single antigen beads associated with recipient
+            epitopes and characterizes them as present (positive), absent (negative),
+            or unknown (not in the current single antigen bead panel).
+            
+        </p>
+        <p>
+            Source code: <a href="https://github.com/ghsmith/epitopeFinder/blob/master/epitopeFinder-webServices/src/main/webapp/ajaxEpitopeReport.html">https://github.com/ghsmith/epitopeFinder/blob/master/epitopeFinder-webServices/src/main/webapp/ajaxEpitopeReport.html</a>
         </p>
         
         <p><br/>Copyright &copy; 2018, Geoffrey H. Smith, MD
