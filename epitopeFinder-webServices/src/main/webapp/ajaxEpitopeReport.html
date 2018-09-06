@@ -118,8 +118,8 @@ $(document).ready(function() {
     })
     .then(getAlleles)
     .then(function() {
-        $('#selectAllelesAntibody').selectize({ maxItems: 10, maxOptions: 10000, placeholder: "no recipient antibodies selected", plugins: ['remove_button'], options: alleles, valueField: "epRegAlleleName", labelField: "epRegAlleleName", searchField: "epRegAlleleName" });
-        $('#selectAllelesRecipientType').selectize({ maxItems: 10, maxOptions: 10000, placeholder: "no recipient HLA type selected", plugins: ['remove_button'], options: alleles, valueField: "epRegAlleleName", labelField: "epRegAlleleName", searchField: "epRegAlleleName" });
+        $('#selectAllelesAntibody').selectize({ maxItems: 10, maxOptions: 500, placeholder: "no recipient antibodies selected", plugins: ['remove_button'], options: alleles, valueField: "epRegAlleleName", labelField: "epRegAlleleName", searchField: "epRegAlleleName" });
+        $('#selectAllelesRecipientType').selectize({ maxItems: 10, maxOptions: 500, placeholder: "no recipient HLA type selected", plugins: ['remove_button'], options: alleles, valueField: "epRegAlleleName", labelField: "epRegAlleleName", searchField: "epRegAlleleName" });
     })
     .done(function() {
         $("#working").hide();
