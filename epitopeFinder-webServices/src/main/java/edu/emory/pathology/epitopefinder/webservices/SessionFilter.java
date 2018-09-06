@@ -70,20 +70,6 @@ public class SessionFilter implements Filter {
                 alleleFinder.assignCurrentSabPanelAlleles(sabPanelFinder);
                 epRegEpitopeFinder = new EpRegEpitopeFinder();
                 epRegEpitopeFinder.assignCurrentSabPanelAlleles(sabPanelFinder);
-                
-alleleFinder.getAlleleByEpRegAlleleName("A*02:01").setRecipientAntibodyForCompat(true);
-alleleFinder.getAlleleByEpRegAlleleName("A*02:03").setRecipientAntibodyForCompat(true);
-alleleFinder.getAlleleByEpRegAlleleName("A*02:06").setRecipientAntibodyForCompat(true);
-alleleFinder.getAlleleByEpRegAlleleName("A*03:01").setRecipientAntibodyForCompat(true);
-alleleFinder.getAlleleByEpRegAlleleName("A*01:01").setRecipientTypeForCompat(true);
-alleleFinder.getAlleleByEpRegAlleleName("A*29:02").setRecipientTypeForCompat(true);
-alleleFinder.getAlleleByEpRegAlleleName("B*08:01").setRecipientTypeForCompat(true);
-alleleFinder.getAlleleByEpRegAlleleName("B*40:01").setRecipientTypeForCompat(true);
-alleleFinder.getAlleleByEpRegAlleleName("C*03:04").setRecipientTypeForCompat(true);
-alleleFinder.getAlleleByEpRegAlleleName("C*07:01").setRecipientTypeForCompat(true);
-epRegEpitopeFinder.computeCompatProperties(alleleFinder);
-alleleFinder.computeCompatProperties(epRegEpitopeFinder);
-
                 ((HttpServletRequest)request).getSession().setAttribute("alleleFinder", alleleFinder);
                 ((HttpServletRequest)request).getSession().setAttribute("sabPanelFinder", sabPanelFinder);
                 ((HttpServletRequest)request).getSession().setAttribute("epRegEpitopeFinder", epRegEpitopeFinder);

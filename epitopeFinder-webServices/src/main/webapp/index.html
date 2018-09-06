@@ -19,10 +19,12 @@
             }
             h2 {
                 margin-top: 40px;
-                border-bottom: 1px solid black;
+                border-bottom: 3px solid black;
             }
             h3 {
                 margin-top: 30px;
+                border-bottom: 1px solid black;
+                font-size: x-large;
             }
             table.parameters {
                 border-spacing: 0px;
@@ -215,6 +217,53 @@
                 }, 1000)});
             </script>
         </p>
+
+        <h3>PUT /epitopeFinder/resources/alleles/{alleleName}</h3>
+        <p>
+            Updates the allele identified by the URL parameter {alleleName} on
+            the server based on the JSON representation of the allele
+            in the body of the request. The update only affects the allele
+            in the HTTP session that is calling the method.
+        </p>
+        <h4>Modifiable Properties</h4>
+        <table class="parameters">
+            <tr><th>name</th><th>type</th><th>description</th><th>example</th></tr>
+            <tr>
+                <td>allele<br/>&nbsp;.recipientAntibodyForCompat</td>
+                <td>boolean</td>
+                <td rowspan="3">
+                    If set to true, designates the allele as reactive with a
+                    recipient antibody, as a recipient type, or as a donor type
+                    and used as the basis for all of the compatibility
+                    properties (properties with names starting with
+                    <i>compat</i>). When <i>PUT /epitopeFinder/session/computeCompat</i>
+                    is invoked, the following properties are automatically
+                    recomputed for all alleles and epitopes based on the values
+                    of the various <i>...ForCompat</i> properties:
+                    <ul>
+                        <li>allele.compatEpRegEpitopeMap</li>
+                        <li>allele.compatInterpretation</li>
+                        <li>epRegEpitope.alleleMap{}.compatStatus</li>
+                        <li>epRegEpitope.compatAlleleFilterMap</li>
+                        <li>epRegEpitope.compatSabPanelCountPresent</li>
+                        <li>epRegEpitope.compatSabPanelCountAbsent</li>
+                        <li>epRegEpitope.compatSabPanelCountUnknown</li>
+                        <li>epRegEpitope.compatSabPanelPctPresent</li>
+                    </ul>
+                </td>
+                <td>{...<br/>recipientAntibodyForCompat: true,<br/>...}</td>
+            </tr>
+            <tr>
+                <td>allele<br/>&nbsp;.recipientTypeForCompat</td>
+                <td>boolean</td>
+                <td>{...<br/>recipientTypeForCompat: true,<br/>...}</td>
+            </tr>
+            <tr>
+                <td>allele<br/>&nbsp;.donorTypeForCompat</td>
+                <td>boolean</td>
+                <td>{...<br/>donorTypeForCompat: true,<br/>...}</td>
+            </tr>
+        </table>
 
         <h3>GET /epitopeFinder/resources/epRegEpitopes</h3>
         <p>
@@ -441,7 +490,7 @@
             </script>
         </p>
 
-        <h3>GET /hladpb1/session</h3>
+        <h3>GET /epitopeFinder/session</h3>
         <p>
             Returns a JSON representation of the current session ID. All changes
             (e.g., clinical information such as antibody profile) are persisted
@@ -451,7 +500,7 @@
         </p>
         <h4>Example Usage</h4>
         <p>
-            <a id="exampleGetSessionLink" href="javascript:void(0);">GET /hladpb1/resources/session</a>
+            <a id="exampleGetSessionLink" href="javascript:void(0);">GET /epitopeFinder/resources/session</a>
             <br/><br/>returns JSON sessionId:
             <div class="jsonOutputContainer"><div class="jsonOutputLabel"><div class="jsonOutputLabelText">sessionId</div></div><div id="exampleGetSessionOutput" class="jsonOutput"></div></div>
             <script>
@@ -459,7 +508,7 @@
                     $("#exampleGetSessionOutput").html("working...");
                     setTimeout(function() {
                     $.ajax({
-                        url: "/hladpb1/resources/session",
+                        url: "/epitopeFinder/resources/session",
                         dataType: "text"
                     }).done(function(response) {
                         $("#exampleGetSessionOutput").html(response);
@@ -468,13 +517,71 @@
             </script>
         </p>
 
-        <h3>PUT /hladpb1/session/reset</h3>
+        <h3>PUT /epitopeFinder/session/reset</h3>
         <p>
             End the current session. All changes are immediately disposed. This
             request has no payload.
+        </p>
+        
+        <h3>PUT /eptiopeFinder/session/computeCompat</h3>
+        <p>
+            Compute the compatibility interpretations for all alleles. See
+            <i>PUT /epitopeFinder/allele/{alleleName}</i> above.
         </p>
         
         <p><br/>Copyright &copy; 2018, Geoffrey H. Smith, MD
         
     </body>
 </html>
+
+<script>
+    
+// Document ready! Let's go...
+$(document).ready(function() {
+    var allele;
+    $.ajax({
+        url: "/epitopeFinder/resources/alleles/A*02:01",
+        dataType: "json"
+    }).then(function(response) {
+        allele = response;
+        allele.recipientAntibodyForCompat = true;
+    }).then(function() {
+    $.ajax({
+        url: "/epitopeFinder/resources/alleles/A*02:01",
+        dataType: "json",
+        type: "PUT",
+        contentType: "application/json",
+        data: JSON.stringify(allele)
+    }).then(function() {
+    $.ajax({
+        url: "/epitopeFinder/resources/alleles/A*29:02",
+        dataType: "json"
+    }).then(function(response) {
+        allele = response;
+        allele.recipientTypeForCompat = true;
+    }).then(function() {
+    $.ajax({
+        url: "/epitopeFinder/resources/alleles/A*29:02",
+        dataType: "json",
+        type: "PUT",
+        contentType: "application/json",
+        data: JSON.stringify(allele)
+    }).then(function() {
+    $.ajax({
+        url: "/epitopeFinder/resources/session/computeCompat",
+        dataType: "json",
+        type: "PUT",
+        contentType: "application/json"
+    }).then(function() {
+        $("#exampleGetAllelesLink").click();
+        $("#exampleGetAlleleLink").click();
+        $("#exampleGetEpitopesLink").click();
+        $("#exampleGetEpitopesLocusGroupLink").click();
+        $("#exampleGetEpitopeLink").click();
+        $("#exampleGetSabPanelsLink").click();
+        $("#exampleGetSabPanelLink").click();
+        $("#exampleGetSessionLink").click();
+    }); }); }); }); });
+});
+
+</script>

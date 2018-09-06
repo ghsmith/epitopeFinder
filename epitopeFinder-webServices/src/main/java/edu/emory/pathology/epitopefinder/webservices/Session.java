@@ -25,8 +25,16 @@ public class Session {
     @PUT
     @Path("reset")
     @Produces("application/json")
-    public void getJson(@Context HttpServletRequest request) {
+    public void putReset(@Context HttpServletRequest request) {
         request.getSession().invalidate();
+    }
+    
+    @PUT
+    @Path("computeCompat")
+    @Produces("application/json")
+    public void putComputeCompat() {
+        SessionFilter.epRegEpitopeFinder.get().computeCompatProperties(SessionFilter.alleleFinder.get());
+        SessionFilter.alleleFinder.get().computeCompatProperties(SessionFilter.epRegEpitopeFinder.get());
     }
     
 }
