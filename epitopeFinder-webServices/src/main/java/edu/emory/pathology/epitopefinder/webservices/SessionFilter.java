@@ -67,8 +67,9 @@ public class SessionFilter implements Filter {
             if(alleleFinder == null || sabPanelFinder == null || epRegEpitopeFinder == null) {
                 alleleFinder = new AlleleFinder(request.getServletContext().getInitParameter("imgtXmlFileName"));
                 sabPanelFinder = new SabPanelFinder(request.getServletContext().getInitParameter("emoryXmlFileName"));
-                alleleFinder.assignCurrentSabPanelAlleles(sabPanelFinder);
                 epRegEpitopeFinder = new EpRegEpitopeFinder();
+                alleleFinder.assignCurrentSabPanelAlleles(sabPanelFinder);
+                alleleFinder.assignEpRegSabPanelAlleles(epRegEpitopeFinder);
                 epRegEpitopeFinder.assignCurrentSabPanelAlleles(sabPanelFinder);
                 ((HttpServletRequest)request).getSession().setAttribute("alleleFinder", alleleFinder);
                 ((HttpServletRequest)request).getSession().setAttribute("sabPanelFinder", sabPanelFinder);

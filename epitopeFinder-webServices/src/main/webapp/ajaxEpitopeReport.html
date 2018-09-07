@@ -22,6 +22,68 @@ body {
     font-size: medium;
 }
 
+table {
+    border-collapse: collapse;
+}
+
+table th, table td {
+    border: 1px solid gray;
+}
+
+table th.bead-not-in-current-panel {
+    background: yellow;
+}
+
+table th.bead-not-in-ep-reg-panel {
+    background: lightgray;
+}
+
+table th.antibody-present {
+    background: green;
+    color: white;
+}
+
+table th.rotate {
+  /* Something you can count on */
+  height: 200px;
+  white-space: nowrap;
+}
+
+table th.rotate > div {
+  transform: 
+    /* Magic Numbers */
+    translate(0px, 85px)
+    /* 45 is really 360 - 45 */
+    rotate(270deg);
+  width: 20px;
+}
+
+table td.name {
+    font-weight: bold;
+}
+
+table td.count {
+    text-align: right;
+    font-weight: bold;
+}
+
+.present {
+    text-align: center;
+    background-color: green;
+    color: white;
+}
+
+.absent {
+    text-align: center;
+    background-color: red;
+    color: white;
+}
+
+.unknown {
+    text-align: center;
+    background-color: yellow;
+}
+
 .selectize-input {
     border: 1px solid black;
 }
@@ -54,6 +116,20 @@ body {
         Recipient HLA Type (multiple selections allowed, type to filter allele list):
         <br/><select id="selectAllelesRecipientType" multiple="true" size="1"></select>
     </p>
+
+    <p>
+        <input type="button" id="buttonGenerateReport" value="Generate Report" style="font-size: large; width: 100%"/>
+    </p>
+
+    <p style="border: 1px solid gray; padding: 10px;">
+        <span class="present">+</span> = The single antigen bead (SAB) includes this epitope and the SAB is positive.<br/>
+        <span class="absent">0</span> = The SAB includes this epitope, but the SAB is negative (if the antibody was reactive with this epitope, the SAB would have been positive).<br/>
+            <span class="unknown">?</span> = The SAB includes this epitope, but this SAB is not part of the One Lambda panel (so the antibody may or may not be reactive with this epitope).<br/>
+    </p>
+    
+    <div id="divReport">
+        <div style="text-align: center; font-size: large;">Press <i>Generate Report</i> when you are ready to view the report.</div>
+    </div>
     
     <p><br/>Copyright &copy; 2018, Geoffrey H. Smith, MD
 
@@ -65,7 +141,8 @@ body {
 
 var sessionId;
 var locusGroups = [ {lgName: "ABC"}, {lgName: "DRB"}, {lgName: "DQ"}, {lgName: "DP"} ];
-var alleles; // the array of alleles
+var alleles = [];
+var epitopes = [];
 
 function getSessionId() {
     $("#working").show();
@@ -87,6 +164,16 @@ function resetSession() {
     });
 }
 
+function computeCompat() {
+    $("#working").show();
+    return $.ajax({
+        url: "/epitopeFinder/resources/session/computeCompat",
+        dataType: "json",
+        type: "PUT",
+        contentType: "application/json"
+    });
+}
+
 function getAlleles() {
     $("#working").show();
     return $.ajax({
@@ -100,7 +187,7 @@ function getAlleles() {
 function putAllele(allele) {
     $("#working").show();
     return $.ajax({
-        url: "/hladpb1/resources/alleles/" + allele.alleleName,
+        url: "/epitopeFinder/resources/alleles/" + allele.alleleName,
         dataType: "json",
         type: "PUT",
         contentType: "application/json",
@@ -108,18 +195,29 @@ function putAllele(allele) {
     });
 }
 
+function getEpitopes() {
+    $("#working").show();
+    return $.ajax({
+        url: "/epitopeFinder/resources/epRegEpitopes/" + $("#selectLocusGroup").val() + "?panelAllelesOnly=true",
+        dataType: "json"
+    }).then(function(response) {
+        epitopes = response;
+    });
+}
+
 // Document ready! Let's go...
 $(document).ready(function() {
 
     $("#working").show();
+    $(document).tooltip();
     getSessionId()
     .then(function() {
          $('#selectLocusGroup').selectize({ options: locusGroups, valueField: "lgName", labelField: "lgName", items: ["ABC"] });
     })
     .then(getAlleles)
     .then(function() {
-        $('#selectAllelesAntibody').selectize({ maxItems: 10, maxOptions: 500, placeholder: "no recipient antibodies selected", plugins: ['remove_button'], options: alleles, valueField: "epRegAlleleName", labelField: "epRegAlleleName", searchField: "epRegAlleleName" });
-        $('#selectAllelesRecipientType').selectize({ maxItems: 10, maxOptions: 500, placeholder: "no recipient HLA type selected", plugins: ['remove_button'], options: alleles, valueField: "epRegAlleleName", labelField: "epRegAlleleName", searchField: "epRegAlleleName" });
+        $('#selectAllelesAntibody').selectize({ maxItems: 10, maxOptions: 500, placeholder: "no recipient antibodies selected", plugins: ['remove_button'], options: alleles, valueField: "epRegAlleleName", labelField: "epRegAlleleName", searchField: "epRegAlleleName", sortField: "sequenceNumber", items: alleles.filter(function(allele) { return allele.recipientAntibodyForCompat; }).map(function(allele) { return allele.epRegAlleleName; }) });
+        $('#selectAllelesRecipientType').selectize({ maxItems: 10, maxOptions: 500, placeholder: "no recipient HLA type selected", plugins: ['remove_button'], options: alleles, valueField: "epRegAlleleName", labelField: "epRegAlleleName", searchField: "epRegAlleleName", sortField: "sequenceNumber", items: alleles.filter(function(allele) { return allele.recipientTypeForCompat; }).map(function(allele) { return allele.epRegAlleleName; }) });
     })
     .done(function() {
         $("#working").hide();
@@ -134,15 +232,70 @@ $(document).ready(function() {
                 s.clear();
                 s.clearOptions();
                 s.load(function(callback) { callback(alleles); });
+                s.setValue(alleles.filter(function(allele) { return allele.recipientAntibodyForCompat; }).map(function(allele) { return allele.epRegAlleleName; }));
             }
             {
                 var s = $("#selectAllelesRecipientType")[0].selectize;
                 s.clear();
                 s.clearOptions();
                 s.load(function(callback) { callback(alleles); });
+                s.setValue(alleles.filter(function(allele) { return allele.recipientTypeForCompat; }).map(function(allele) { return allele.epRegAlleleName; }));
             }
         })              
         .done(function() {
+            $("#working").hide();
+        });
+    });
+
+    $("#buttonGenerateReport").click(function() {
+        $("#working").show();
+        var setAllelesToPut = new Set();
+        $.each(alleles.filter(function(allele) { return allele.recipientAntibodyForCompat || allele.recipientTypeForCompat; }), function(index, allele) {
+            allele.recipientAntibodyForCompat = false;
+            allele.recipientTypeForCompat = false;
+            setAllelesToPut.add(allele);
+        });
+        $.each($("#selectAllelesAntibody").val(), function(index, epRegAlleleName) {
+            var allele = alleles.find(function(allele) { return allele.epRegAlleleName == epRegAlleleName; });
+            allele.recipientAntibodyForCompat = true;
+            setAllelesToPut.add(allele);
+        });
+        $.each($("#selectAllelesRecipientType").val(), function(index, epRegAlleleName) {
+            var allele = alleles.find(function(allele) { return allele.epRegAlleleName == epRegAlleleName; });
+            allele.recipientTypeForCompat = true;
+            setAllelesToPut.add(allele);
+        });
+        var dfrs = [];
+        $.each(Array.from(setAllelesToPut), function(index, allele) {
+            delete allele.$order;
+            dfrs.push(putAllele(allele));
+        });
+        $.when.apply(null, dfrs).then(computeCompat)
+        .then(getEpitopes)
+        .done(function() {
+
+            var htmlReport = [];
+            htmlReport.push("<table id='tableReport'>");
+            htmlReport.push("<tr><th>epitope</th><th>&nbsp;+&nbsp;</th><th>&nbsp;0&nbsp;</th><th>&nbsp;?&nbsp;</th>")
+            $.each(alleles.filter(function(allele) { return allele.inCurrentSabPanel || allele.inEpRegSabPanel; }), function(index, allele) {
+                htmlReport.push("<th class='rotate" + (!allele.inCurrentSabPanel ? " bead-not-in-current-panel " : " ") + (allele.inCurrentSabPanel && !allele.inEpRegSabPanel ? " bead-not-in-ep-reg-panel " : " ") + (allele.recipientAntibodyForCompat ? " antibody-present " : "") + "'><div>" + allele.epRegAlleleName + "</div></th>");
+            });
+            htmlReport.push("</tr>");
+            $.each(epitopes.filter(function(epitope) { return epitope.compatSabPanelCountPresent > 0; }), function(index, epitope) {
+                htmlReport.push("<tr>");
+                htmlReport.push("<td class='name'>" + epitope.epitopeName + "</td>");
+                htmlReport.push("<td class='count'>" + epitope.compatSabPanelCountPresent + "</td>");
+                htmlReport.push("<td class='count'>" + epitope.compatSabPanelCountAbsent + "</td>");
+                htmlReport.push("<td class='count'>" + epitope.compatSabPanelCountUnknown + "</td>");
+                $.each(alleles.filter(function(allele) { return allele.inCurrentSabPanel || allele.inEpRegSabPanel; }), function(index, allele) {
+                    var compatStatus = (epitope.alleleMap[allele.epRegAlleleName] ? epitope.alleleMap[allele.epRegAlleleName].compatStatus : "");
+                    htmlReport.push("<td class='" + (compatStatus == "+" ? "present" : "") + (compatStatus == "0" ? "absent" : "") + (compatStatus == "?" ? "unknown" : "") + "' title='" + epitope.epitopeName + " / " + allele.epRegAlleleName + "'>" + compatStatus + "</td>");
+                });
+                htmlReport.push("</tr>");
+            });
+            htmlReport.push("</table>");
+            $("#divReport").html(htmlReport.join(""));
+            
             $("#working").hide();
         });
     });
