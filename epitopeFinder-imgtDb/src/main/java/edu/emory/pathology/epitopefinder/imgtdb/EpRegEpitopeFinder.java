@@ -171,7 +171,7 @@ public class EpRegEpitopeFinder {
                     }
                     else {
                         if(allele.getInCurrentSabPanel()) {
-                            allele.setCompatStatus("-"); // bead is negative
+                            allele.setCompatStatus("0"); // bead is negative
                         }
                         else {
                             allele.setCompatStatus("?"); // we don't know status of bead (bead is part of Epitope Registry Panel but not current panel)
@@ -180,12 +180,12 @@ public class EpRegEpitopeFinder {
                 });
             });
         }
-        
+            
         // 3. Set the compatSabPanelCount properties for each epitope.
         for(String locusGroup : locusGroups) {
             getEpitopeListByEpRegLocusGroup(locusGroup).stream().forEach((epitope) -> {
                 epitope.setCompatSabPanelCountPresent(new Long(epitope.getAlleleMap().values().stream().filter((allele) -> ("+".equals(allele.getCompatStatus()))).count()).intValue());
-                epitope.setCompatSabPanelCountAbsent(new Long(epitope.getAlleleMap().values().stream().filter((allele) -> ("-".equals(allele.getCompatStatus()))).count()).intValue());
+                epitope.setCompatSabPanelCountAbsent(new Long(epitope.getAlleleMap().values().stream().filter((allele) -> ("0".equals(allele.getCompatStatus()))).count()).intValue());
                 epitope.setCompatSabPanelCountUnknown(new Long(epitope.getAlleleMap().values().stream().filter((allele) -> ("?".equals(allele.getCompatStatus()))).count()).intValue());
                 if((epitope.getCompatSabPanelCountPresent() + epitope.getCompatSabPanelCountAbsent()) > 0) {
                     epitope.setCompatSabPanelPctPresent((100 * epitope.getCompatSabPanelCountPresent()) / (epitope.getCompatSabPanelCountPresent() + epitope.getCompatSabPanelCountAbsent()));

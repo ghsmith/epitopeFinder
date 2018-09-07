@@ -81,7 +81,7 @@ public class AlleleFinder {
             edu.emory.pathology.epitopefinder.imgtdb.jaxb.imgt.Alleles imgtAlleles = imgtFinder.getAlleles();
             // Process each IMGT HLA-DPB1 allele that has a sequence element.
             Pattern pattern = Pattern.compile("HLA-([^\\*]*)\\*([0-9]*):([0-9]*).*");
-            imgtAlleles.getAllele().stream().forEach((imgtAllele) -> {
+            imgtAlleles.getAllele().stream().filter((imgtAllele) -> (!imgtAllele.getName().endsWith("N"))).forEach((imgtAllele) -> {
                 Matcher matcher = pattern.matcher(imgtAllele.getName());
                 if(matcher.find()) {
                     String epRegLocusGroup = imgtLocusToEpRegLocusGroupMap.get(String.format("HLA-%s", matcher.group(1)));
@@ -119,6 +119,15 @@ public class AlleleFinder {
         });
     }
 
+    public void assignEpRegSabPanelAlleles(EpRegEpitopeFinder epitopeFinder) {
+        getAlleleList().stream().forEach((allele) -> { allele.setInEpRegSabPanel(false); });
+        epitopeFinder.getEpitopeList().stream().forEach((epitope) -> {
+            epitope.getAlleleMap().values().stream().filter((alleleRef) -> (alleleRef.getInEpRegSabPanel())).forEach((alleleRef) -> {
+                getAlleleByEpRegAlleleName(alleleRef.getEpRegAlleleName()).setInEpRegSabPanel(true);
+            });
+        });
+    }
+
     // This method should only be invoked after epRegEpitope.computeCompatProperties.
     public void computeCompatProperties(EpRegEpitopeFinder epitopeFinder) {
 
@@ -152,7 +161,9 @@ public class AlleleFinder {
                 AlleleEpRegEpitopeRef alleleEpRegEpitopeRef = new Allele.AlleleEpRegEpitopeRef();
                 alleleEpRegEpitopeRef.setEpitopeName(epitope.getEpitopeName());
                 alleleEpRegEpitopeRef.setCompatSabPanelPctPresent(epitope.getCompatSabPanelPctPresent());
-                getAlleleByEpRegAlleleName(alleleRef.getEpRegAlleleName()).getCompatEpRegEpitopeMap().put(epitope.getEpitopeName(), alleleEpRegEpitopeRef);
+                if(getAlleleByEpRegAlleleName(alleleRef.getEpRegAlleleName()) != null) { // epitope registry references some NULL alleles which I'm not pulling in from IMGT... not sure what this means
+                    getAlleleByEpRegAlleleName(alleleRef.getEpRegAlleleName()).getCompatEpRegEpitopeMap().put(epitope.getEpitopeName(), alleleEpRegEpitopeRef);
+                }
             });
         });
         
