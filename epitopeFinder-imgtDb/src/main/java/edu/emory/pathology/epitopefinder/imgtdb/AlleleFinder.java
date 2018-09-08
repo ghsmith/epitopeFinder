@@ -139,7 +139,7 @@ public class AlleleFinder {
         getAlleleList().stream().filter((allele) -> (allele.getRecipientAntibodyForCompat() && allele.getRecipientTypeForCompat())).forEach((allele) -> { allele.setCompatInterpretation("AA"); });
 
         // 2. Handle incompatible (I).
-        getAlleleList().stream().filter((allele) -> (allele.getRecipientAntibodyForCompat() && !allele.getRecipientTypeForCompat())).forEach((allele) -> { allele.setCompatInterpretation("I"); });
+        getAlleleList().stream().filter((allele) -> (allele.getCompatInterpretation() == null && allele.getRecipientAntibodyForCompat() && !allele.getRecipientTypeForCompat())).forEach((allele) -> { allele.setCompatInterpretation("I"); });
 
         // 3. Handle electronically incompatible (EI).
         getAlleleList().stream().filter((allele) -> (allele.getCompatInterpretation() == null)).forEach((allele) -> {
@@ -158,10 +158,13 @@ public class AlleleFinder {
         // 5. Set the epitope map up.
         epitopeFinder.getEpitopeList().stream().filter((epitope) -> (epitope.getCompatSabPanelPctPresent() != null && epitope.getCompatSabPanelPctPresent() > 0)).forEach((epitope) -> {
             epitope.getAlleleMap().values().stream().forEach((alleleRef) -> {
-                AlleleEpRegEpitopeRef alleleEpRegEpitopeRef = new Allele.AlleleEpRegEpitopeRef();
-                alleleEpRegEpitopeRef.setEpitopeName(epitope.getEpitopeName());
-                alleleEpRegEpitopeRef.setCompatSabPanelPctPresent(epitope.getCompatSabPanelPctPresent());
                 if(getAlleleByEpRegAlleleName(alleleRef.getEpRegAlleleName()) != null) { // epitope registry references some NULL alleles which I'm not pulling in from IMGT... not sure what this means
+                    AlleleEpRegEpitopeRef alleleEpRegEpitopeRef = new Allele.AlleleEpRegEpitopeRef();
+                    alleleEpRegEpitopeRef.setEpitopeName(epitope.getEpitopeName());
+                    alleleEpRegEpitopeRef.setCompatSabPanelCountPresent(epitope.getCompatSabPanelCountPresent());
+                    alleleEpRegEpitopeRef.setCompatSabPanelCountAbsent(epitope.getCompatSabPanelCountAbsent());
+                    alleleEpRegEpitopeRef.setCompatSabPanelCountUnknown(epitope.getCompatSabPanelCountUnknown());
+                    alleleEpRegEpitopeRef.setCompatSabPanelPctPresent(epitope.getCompatSabPanelPctPresent());
                     getAlleleByEpRegAlleleName(alleleRef.getEpRegAlleleName()).getCompatEpRegEpitopeMap().put(epitope.getEpitopeName(), alleleEpRegEpitopeRef);
                 }
             });

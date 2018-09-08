@@ -12,6 +12,9 @@ public class Allele implements Serializable {
     public static class AlleleEpRegEpitopeRef implements Serializable {
         
         private String epitopeName;
+        private Integer compatSabPanelCountPresent;
+        private Integer compatSabPanelCountAbsent;
+        private Integer compatSabPanelCountUnknown;
         private Integer compatSabPanelPctPresent;
 
         public String getEpitopeName() {
@@ -22,6 +25,30 @@ public class Allele implements Serializable {
             this.epitopeName = epitopeName;
         }
 
+        public Integer getCompatSabPanelCountPresent() {
+            return compatSabPanelCountPresent;
+        }
+
+        public void setCompatSabPanelCountPresent(Integer compatSabPanelCountPresent) {
+            this.compatSabPanelCountPresent = compatSabPanelCountPresent;
+        }
+
+        public Integer getCompatSabPanelCountAbsent() {
+            return compatSabPanelCountAbsent;
+        }
+
+        public void setCompatSabPanelCountAbsent(Integer compatSabPanelCountAbsent) {
+            this.compatSabPanelCountAbsent = compatSabPanelCountAbsent;
+        }
+
+        public Integer getCompatSabPanelCountUnknown() {
+            return compatSabPanelCountUnknown;
+        }
+
+        public void setCompatSabPanelCountUnknown(Integer compatSabPanelCountUnknown) {
+            this.compatSabPanelCountUnknown = compatSabPanelCountUnknown;
+        }
+
         public Integer getCompatSabPanelPctPresent() {
             return compatSabPanelPctPresent;
         }
@@ -29,7 +56,7 @@ public class Allele implements Serializable {
         public void setCompatSabPanelPctPresent(Integer compatSabPanelPctPresent) {
             this.compatSabPanelPctPresent = compatSabPanelPctPresent;
         }
-        
+       
     }
         
     private Integer sequenceNumber;
