@@ -29,19 +29,6 @@ table th, table td {
     border: 1px solid gray;
 }
 
-table th.bead-not-in-current-panel {
-    background: yellow;
-}
-
-table th.bead-not-in-ep-reg-panel {
-    background: lightgray;
-}
-
-table th.antibody-present {
-    background: green;
-    color: white;
-}
-
 table th.rotate {
   /* Something you can count on */
   height: 200px;
@@ -61,26 +48,13 @@ table td.name {
     font-weight: bold;
 }
 
-table td.count {
-    text-align: right;
+table td.interp {
+    text-align: center;
     font-weight: bold;
 }
 
-.present {
+table td.alleleEpitope {
     text-align: center;
-    background-color: green;
-    color: white;
-}
-
-.absent {
-    text-align: center;
-    background-color: red;
-    color: white;
-}
-
-.unknown {
-    text-align: center;
-    background-color: yellow;
 }
 
 tr:hover {
@@ -97,7 +71,7 @@ tr:hover td {
 
 </style>
 
-<title>HLA Epitope Report</title>
+<title>HLA Epitope Compatibility Report</title>
 
 </head>
 
@@ -105,9 +79,11 @@ tr:hover td {
 
     <div id="working" style="position: fixed; top: 0px; width: 150px; left: 50%; margin-left: -75px; text-align: center; background-color: red; color: white; font-weight: bold;">working...</div>
 
-    <h1>HLA Epitope Report (<a href="https://github.com/ghsmith/epitopeFinder/blob/master/epitopeFinder-webServices/src/main/webapp/ajaxEpitopeReport.html">source code</a>)</h1>
+    <h1>HLA Epitope Compatibility Report (<a href="https://github.com/ghsmith/epitopeFinder/blob/master/epitopeFinder-webServices/src/main/webapp/ajaxCompatibilityReportNoEpitopes.html">source code</a>)</h1>
     
     <p style="font-weight: bold; font-size: large;">This report uses epitopes defined in the <a href="http://www.epregistry.com.br/">HLA Epitope Registry</a>.</p>
+
+    <p>This is the abridged version of the report. A <a href="/epitopeFinder/ajaxCompatibilityReport.html">full version<a> is also available.</p>
 
     <p>
         The IMGT allele database version is <span id="imgtDbVersion">...</span>.
@@ -134,14 +110,22 @@ tr:hover td {
     </p>
 
     <p>
+        donor HLA type (up to 6 selections allowed, type to filter allele list):
+        <br/><select id="selectAllelesDonorType" multiple="true" size="1"></select>
+    </p>
+
+    <p>
         <input type="button" id="buttonGenerateReport" value="Generate Report" style="font-size: large; width: 100%"/>
     </p>
 
-    <p style="border: 1px solid gray; padding: 10px;">
-        <span class="present">+</span> = The single antigen bead (SAB) includes this epitope and the SAB is positive.<br/>
-        <span class="absent">0</span> = The SAB includes this epitope, but the SAB is negative (if the antibody was reactive with this epitope, the SAB would have been positive).<br/>
-            <span class="unknown">?</span> = The SAB includes this epitope and the allele is included in the HLA Epitope Registry panel, but this SAB is not part of the One Lambda panel (so the antibody may or may not be reactive with this epitope).<br/>
-    </p>
+    <table style="width: 100%;">
+        <tr><td>NEI</td><td>Not Electronically Incompatible</td><td>There is no inferred reactivity with epitope(s) of this allele.</td></tr>
+        <tr><td>EI</td><td>Electronically Incompatible</td><td>There is inferred reactivity with epitope(s) of this allele. A reactive antibody is inferred when 100% of the single antigen bead (SAB) panel beads bearing the epitope are positive.</td></tr>
+        <tr><td>I</td><td>Incompatible</td><td>The SAB for this allele is positive.</td></tr>
+        <tr><td>AA</td><td>Auto-antibody</td><td>The SAB for this allele is positive, but this is also a recipient allele.</td></tr>
+    </table>
+
+    <p></p>
     
     <div id="divReport">
         <div style="text-align: center; font-size: large;">Press <i>Generate Report</i> when you are ready to view the report.</div>
@@ -240,6 +224,7 @@ $(document).ready(function() {
     .then(function() {
         $('#selectAllelesAntibody').selectize({ maxItems: 10, maxOptions: 500, placeholder: "no recipient antibodies selected", plugins: ['remove_button'], options: alleles.filter(function(allele) { return allele.inCurrentSabPanel; }), valueField: "epRegAlleleName", labelField: "epRegAlleleName", searchField: "epRegAlleleName", sortField: "sequenceNumber", items: alleles.filter(function(allele) { return allele.recipientAntibodyForCompat; }).map(function(allele) { return allele.epRegAlleleName; }) });
         $('#selectAllelesRecipientType').selectize({ maxItems: 6, maxOptions: 500, placeholder: "no recipient HLA type selected", plugins: ['remove_button'], options: alleles, valueField: "epRegAlleleName", labelField: "epRegAlleleName", searchField: "epRegAlleleName", sortField: "sequenceNumber", items: alleles.filter(function(allele) { return allele.recipientTypeForCompat; }).map(function(allele) { return allele.epRegAlleleName; }) });
+        $('#selectAllelesDonorType').selectize({ maxItems: 6, maxOptions: 500, placeholder: "no donor HLA type selected", plugins: ['remove_button'], options: alleles, valueField: "epRegAlleleName", labelField: "epRegAlleleName", searchField: "epRegAlleleName", sortField: "sequenceNumber", items: alleles.filter(function(allele) { return allele.donorTypeForCompat; }).map(function(allele) { return allele.epRegAlleleName; }) });
     })
     .done(function() {
         $("#imgtDbVersion").html(alleles[0].version);
@@ -266,6 +251,13 @@ $(document).ready(function() {
                 s.load(function(callback) { callback(alleles); });
                 s.setValue(alleles.filter(function(allele) { return allele.recipientTypeForCompat; }).map(function(allele) { return allele.epRegAlleleName; }));
             }
+            {
+                var s = $("#selectAllelesDonorType")[0].selectize;
+                s.clear();
+                s.clearOptions();
+                s.load(function(callback) { callback(alleles); });
+                s.setValue(alleles.filter(function(allele) { return allele.donorTypeForCompat; }).map(function(allele) { return allele.epRegAlleleName; }));
+            }
         })              
         .done(function() {
             $("#working").hide();
@@ -275,9 +267,10 @@ $(document).ready(function() {
     $("#buttonGenerateReport").click(function() {
         $("#working").show();
         var setAllelesToPut = new Set();
-        $.each(alleles.filter(function(allele) { return allele.recipientAntibodyForCompat || allele.recipientTypeForCompat; }), function(index, allele) {
+        $.each(alleles.filter(function(allele) { return allele.recipientAntibodyForCompat || allele.recipientTypeForCompat || allele.donorTypeForCompat; }), function(index, allele) {
             allele.recipientAntibodyForCompat = false;
             allele.recipientTypeForCompat = false;
+            allele.donorTypeForCompat = false;
             setAllelesToPut.add(allele);
         });
         $.each($("#selectAllelesAntibody").val(), function(index, epRegAlleleName) {
@@ -288,6 +281,11 @@ $(document).ready(function() {
         $.each($("#selectAllelesRecipientType").val(), function(index, epRegAlleleName) {
             var allele = alleles.find(function(allele) { return allele.epRegAlleleName == epRegAlleleName; });
             allele.recipientTypeForCompat = true;
+            setAllelesToPut.add(allele);
+        });
+        $.each($("#selectAllelesDonorType").val(), function(index, epRegAlleleName) {
+            var allele = alleles.find(function(allele) { return allele.epRegAlleleName == epRegAlleleName; });
+            allele.donorTypeForCompat = true;
             setAllelesToPut.add(allele);
         });
         var dfrs = [];
@@ -314,29 +312,14 @@ $(document).ready(function() {
             });
             var htmlReport = [];
             htmlReport.push("<table id='tableReport'>");
-            htmlReport.push("<tr><th>epitope</th><th>&nbsp;+&nbsp;</th><th>&nbsp;0&nbsp;</th><th>&nbsp;?&nbsp;</th><th>references</th>")
-            $.each(alleles.filter(function(allele) { return allele.inCurrentSabPanel || allele.inEpRegSabPanel; }), function(index, allele) {
-                htmlReport.push("<th class='rotate" + (!allele.inCurrentSabPanel ? " bead-not-in-current-panel " : " ") + (allele.inCurrentSabPanel && !allele.inEpRegSabPanel ? " bead-not-in-ep-reg-panel " : " ") + (allele.recipientAntibodyForCompat ? " antibody-present " : "") + "'><div>" + allele.epRegAlleleName + "</div></th>");
-            });
-            htmlReport.push("</tr>");
-            if(epitopes.filter(function(epitope) { return epitope.compatSabPanelCountPresent > 0; }).length == 0) {
-                htmlReport.push("<tr><td colspan='" + (alleles.filter(function(allele) { return allele.inCurrentSabPanel || allele.inEpRegSabPanel; }).length + 5) + "'><i>no recipient antibodies selected</i></td></tr>")
+            htmlReport.push("<tr><th>allele name</th><th>status</th></tr>")
+            if(alleles.filter(function(allele) { return allele.donorTypeForCompat; }).length == 0) {
+                htmlReport.push("<tr><td colspan='2'><i>no donor HLA types selected</i></td></tr>")
             }
-            $.each(epitopes.filter(function(epitope) { return epitope.compatSabPanelCountPresent > 0; }), function(index, epitope) {
+            $.each(alleles.filter(function(allele) { return allele.donorTypeForCompat; }), function(index, allele) {
                 htmlReport.push("<tr>");
-                htmlReport.push("<td class='name'>" + epitope.epitopeName + "</td>");
-                htmlReport.push("<td class='count'>" + epitope.compatSabPanelCountPresent + "</td>");
-                htmlReport.push("<td class='count'>" + epitope.compatSabPanelCountAbsent + "</td>");
-                htmlReport.push("<td class='count'>" + epitope.compatSabPanelCountUnknown + "</td>");
-                var refNos = [];
-                $.each(epitope.compatAlleleFilterMap, function(index, alleleRef) {
-                    refNos.push(referenceMap[alleleRef.reactiveEpRegAlleleName].refNo);
-                });
-                htmlReport.push("<td>" + refNos.sort(function(a, b) { return a - b; }).join(",") + "</td>");
-                $.each(alleles.filter(function(allele) { return allele.inCurrentSabPanel || allele.inEpRegSabPanel; }), function(index, allele) {
-                    var compatStatus = (epitope.alleleMap[allele.epRegAlleleName] ? epitope.alleleMap[allele.epRegAlleleName].compatStatus : "");
-                    htmlReport.push("<td class='" + (compatStatus == "+" ? "present" : "") + (compatStatus == "0" ? "absent" : "") + (compatStatus == "?" ? "unknown" : "") + "' title='" + epitope.epitopeName + " / " + allele.epRegAlleleName + "'>" + compatStatus + "</td>");
-                });
+                htmlReport.push("<td class='name'>" + allele.epRegAlleleName + "</td>");
+                htmlReport.push("<td class='interp'>" + allele.compatInterpretation + "</td>");
                 htmlReport.push("</tr>");
             });
             htmlReport.push("</table>");

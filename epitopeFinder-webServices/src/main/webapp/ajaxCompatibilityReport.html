@@ -84,6 +84,15 @@ tr:hover td {
     <p style="font-weight: bold; font-size: large;">This report uses epitopes defined in the <a href="http://www.epregistry.com.br/">HLA Epitope Registry</a>.</p>
 
     <p>
+        The IMGT allele database version is <span id="imgtDbVersion">...</span>.
+        The session ID is <span id="sessionId">...</span>.
+    </p>
+    
+    <p>
+        This report is for research use only.
+    </p>
+    
+    <p>
         locus group:
         <br/><select id="selectLocusGroup"></select>
     </p>
@@ -197,6 +206,12 @@ function getEpitopes() {
 // Document ready! Let's go...
 $(document).ready(function() {
 
+    $(document).ajaxError(function(event, request, settings, error) {
+        $("#working").hide();
+        console.log("request.responseText=" + request.responseText);
+        alert("A web service error has occurred: " + error + " calling " + settings.url + ". See console for more details.");
+    });
+
     $("#working").show();
     $(document).tooltip();
     getSessionId()
@@ -210,6 +225,8 @@ $(document).ready(function() {
         $('#selectAllelesDonorType').selectize({ maxItems: 6, maxOptions: 500, placeholder: "no donor HLA type selected", plugins: ['remove_button'], options: alleles, valueField: "epRegAlleleName", labelField: "epRegAlleleName", searchField: "epRegAlleleName", sortField: "sequenceNumber", items: alleles.filter(function(allele) { return allele.donorTypeForCompat; }).map(function(allele) { return allele.epRegAlleleName; }) });
     })
     .done(function() {
+        $("#imgtDbVersion").html(alleles[0].version);
+        $("#sessionId").html(sessionId);
         $("#working").hide();
     });
 
@@ -275,6 +292,7 @@ $(document).ready(function() {
             dfrs.push(putAllele(allele));
         });
         $.when.apply(null, dfrs).then(computeCompat)
+        .then(getAlleles)
         .then(getEpitopes)
         .done(function() {
             var referenceMap = {};

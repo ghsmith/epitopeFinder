@@ -566,8 +566,18 @@
             Source code: <a href="https://github.com/ghsmith/epitopeFinder/blob/master/epitopeFinder-webServices/src/main/webapp/ajaxCompatibilityReport.html">https://github.com/ghsmith/epitopeFinder/blob/master/epitopeFinder-webServices/src/main/webapp/ajaxCompatibilityReport.html</a>
         </p>
         
+        <h3><a href="/epitopeFinder/ajaxCompatibilityReportNoEpitopes.html">HLA Epitope Compatibility Report <i style="color: green;">&Longrightarrow;&nbsp;Express&nbsp;&Longrightarrow;</i></a></h3>
+        <p>
+            Same as above, but without epitopes. This version works
+            better on devices that have smaller displays, limited bandwidth, or
+            slower graphics rendering.
+        </p>
+        <p>
+            Source code: <a href="https://github.com/ghsmith/epitopeFinder/blob/master/epitopeFinder-webServices/src/main/webapp/ajaxCompatibilityReportNoEpitopes.html">https://github.com/ghsmith/epitopeFinder/blob/master/epitopeFinder-webServices/src/main/webapp/ajaxCompatibilityReportNoEpitopes.html</a>
+        </p>
+
         <p><br/>Copyright &copy; 2018, Geoffrey H. Smith, MD
-        
+            
     </body>
 </html>
 
@@ -575,6 +585,12 @@
     
 // Document ready! Let's go...
 $(document).ready(function() {
+    
+    $(document).ajaxError(function(event, request, settings, error) {
+        console.log("request.responseText=" + request.responseText);
+        alert("A web service error has occurred: " + error + " calling " + settings.url + ". See console for more details.");
+    });
+    
     var allele;
     $.ajax({
         url: "/epitopeFinder/resources/alleles/A*02:01",
