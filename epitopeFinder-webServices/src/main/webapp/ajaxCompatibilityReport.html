@@ -340,10 +340,10 @@ $(document).ready(function() {
                 $.each(epitopes.filter(function(epitope) { return epitope.compatSabPanelCountPresent > 0; }), function(index, epitope) {
                     var alleleEpitope = allele.compatEpRegEpitopeMap[epitope.epitopeName];
                     if(alleleEpitope) {
-                        htmlReport.push("<td class='alleleEpitope' style='" + (alleleEpitope.compatSabPanelPctPresent == 100 ? "color: white; background-color: red;" : "") + "'>X</td>");
+                        htmlReport.push("<td class='alleleEpitope' style='" + (alleleEpitope.compatSabPanelPctPresent == 100 ? "color: white; background-color: red;" : "") + "' title='" + allele.epRegAlleleName + " / " + epitope.epitopeName + "'>X</td>");
                     }
                     else {
-                        htmlReport.push("<td class='alleleEpitope'></td>")
+                        htmlReport.push("<td class='alleleEpitope' title='" + allele.epRegAlleleName + " / " + epitope.epitopeName + "'></td>")
                     }
                 });
                 htmlReport.push("</tr>");
