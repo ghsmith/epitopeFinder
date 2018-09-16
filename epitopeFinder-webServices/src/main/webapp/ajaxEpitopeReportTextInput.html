@@ -105,13 +105,12 @@ tbody tr:hover td {
 
     <div id="working" style="position: fixed; top: 0px; width: 150px; left: 50%; margin-left: -75px; text-align: center; background-color: red; color: white; font-weight: bold;">working...</div>
 
-    <h1>HLA Epitope Report (<a href="https://github.com/ghsmith/epitopeFinder/blob/master/epitopeFinder-webServices/src/main/webapp/ajaxEpitopeReport.html">source code</a>)</h1>
+    <h1>HLA Epitope Report (<a href="https://github.com/ghsmith/epitopeFinder/blob/master/epitopeFinder-webServices/src/main/webapp/ajaxEpitopeReportTextInput.html">source code</a>)</h1>
     
     <p style="font-weight: bold; font-size: large;">This report uses epitopes defined in the <a href="http://www.epregistry.com.br/">HLA Epitope Registry</a>.</p>
 
     <p>
-        This version of the report uses picklists to select alleles. A <a href="/epitopeFinder/ajaxEpitopeReportTextInput.html">no-picklist version</a> of this report is also available.
-        The no-picklist version of the report uses direct text input may be more convenient when you are copying-and-pasting lists of alleles.
+        This version of the report does not use picklists to select alleles. A <a href="/epitopeFinder/ajaxEpitopeReport.html">picklist version</a> of this report is also available.
     </p>
     
     <p>
@@ -129,13 +128,13 @@ tbody tr:hover td {
     </p>
 
     <p>
-        recipient antibodies (positive single antigen beads, up to 10 selections allowed, type to filter allele list):
-        <br/><select id="selectAllelesAntibody" multiple="true" size="1"></select>
+        recipient antibodies (separate allele names by commas):
+        <br/><input type="text" id="inputAllelesAntibody" style="width: 100%;"/>
     </p>
 
     <p>
-        recipient HLA type (up to 6 selections allowed, type to filter allele list):
-        <br/><select id="selectAllelesRecipientType" multiple="true" size="1"></select>
+        recipient HLA type (separate allele names by commas):
+        <br/><input type="text" id="inputAllelesRecipientType" style="width: 100%"/>
     </p>
 
     <p>
@@ -289,9 +288,11 @@ $(document).ready(function() {
          $('#selectLocusGroup').selectize({ options: locusGroups, valueField: "lgName", labelField: "lgName", items: ["ABC"] });
     })
     .then(getAlleles)
+    .then(function() {
+        $("#inputAllelesAntibody").val(alleles.filter(function(allele) { return allele.recipientAntibodyForCompat; }).map(function(allele) { return allele.epRegAlleleName; }).join(", "));
+        $("#inputAllelesRecipientType").val(alleles.filter(function(allele) { return allele.recipientTypeForCompat; }).map(function(allele) { return allele.epRegAlleleName; }).join(", "));
+    })
     .done(function() {
-        $('#selectAllelesAntibody').selectize({ maxItems: 10, maxOptions: 500, placeholder: "no recipient antibodies selected", plugins: ['remove_button'], options: alleles.filter(function(allele) { return allele.inCurrentSabPanel; }), valueField: "epRegAlleleName", labelField: "epRegAlleleName", searchField: "epRegAlleleName", sortField: "sequenceNumber", items: alleles.filter(function(allele) { return allele.recipientAntibodyForCompat; }).map(function(allele) { return allele.epRegAlleleName; }) });
-        $('#selectAllelesRecipientType').selectize({ maxItems: 6, maxOptions: 500, placeholder: "no recipient HLA type selected", plugins: ['remove_button'], options: alleles, valueField: "epRegAlleleName", labelField: "epRegAlleleName", searchField: "epRegAlleleName", sortField: "sequenceNumber", items: alleles.filter(function(allele) { return allele.recipientTypeForCompat; }).map(function(allele) { return allele.epRegAlleleName; }) });
         $("#imgtDbVersion").html(alleles[0].version);
         $("#sessionId").html(sessionId);
         $("#working").hide();
@@ -302,20 +303,8 @@ $(document).ready(function() {
         $("#divReport").html("<div style='text-align: center; font-size: large;'>Press <i>Generate Report</i> when you are ready to view the report.</div>");
         getAlleles()
         .done(function() {
-            {
-                var s = $("#selectAllelesAntibody")[0].selectize;
-                s.clear();
-                s.clearOptions();
-                s.load(function(callback) { callback(alleles.filter(function(allele) { return allele.inCurrentSabPanel; })); });
-                s.setValue(alleles.filter(function(allele) { return allele.recipientAntibodyForCompat; }).map(function(allele) { return allele.epRegAlleleName; }));
-            }
-            {
-                var s = $("#selectAllelesRecipientType")[0].selectize;
-                s.clear();
-                s.clearOptions();
-                s.load(function(callback) { callback(alleles); });
-                s.setValue(alleles.filter(function(allele) { return allele.recipientTypeForCompat; }).map(function(allele) { return allele.epRegAlleleName; }));
-            }
+            $("#inputAllelesAntibody").val(alleles.filter(function(allele) { return allele.recipientAntibodyForCompat; }).map(function(allele) { return allele.epRegAlleleName; }).join(", "));
+            $("#inputAllelesRecipientType").val(alleles.filter(function(allele) { return allele.recipientTypeForCompat; }).map(function(allele) { return allele.epRegAlleleName; }).join(", "));
             $("#working").hide();
         });
     });
@@ -328,15 +317,30 @@ $(document).ready(function() {
             allele.recipientTypeForCompat = false;
             setAllelesToPut.add(allele);
         });
-        $.each($("#selectAllelesAntibody").val(), function(index, epRegAlleleName) {
-            var allele = alleles.find(function(allele) { return allele.epRegAlleleName == epRegAlleleName; });
-            allele.recipientAntibodyForCompat = true;
-            setAllelesToPut.add(allele);
+        $.each($("#inputAllelesAntibody").val().split(","), function(index, epRegAlleleName) {
+            var allele = alleles.find(function(allele) { return allele.epRegAlleleName == epRegAlleleName.trim(); });
+            if(!allele) {
+                alert("Antibody allele \"" + epRegAlleleName + "\" is not found and will be ignored. Use the picklist version of the report if you are having trouble selecting alleles.");
+            }
+            else {
+                if(!allele.inCurrentSabPanel) {
+                    alert("Antibody allele \"" + epRegAlleleName + "\" is not in the current SAB panel and will be ignored. Use the picklist version of the report if you are having trouble selecting alleles.");
+                }
+                else {
+                    allele.recipientAntibodyForCompat = true;
+                    setAllelesToPut.add(allele);
+                }
+            }
         });
-        $.each($("#selectAllelesRecipientType").val(), function(index, epRegAlleleName) {
-            var allele = alleles.find(function(allele) { return allele.epRegAlleleName == epRegAlleleName; });
-            allele.recipientTypeForCompat = true;
-            setAllelesToPut.add(allele);
+        $.each($("#inputAllelesRecipientType").val().split(","), function(index, epRegAlleleName) {
+            var allele = alleles.find(function(allele) { return allele.epRegAlleleName == epRegAlleleName.trim(); });
+            if(!allele) {
+                alert("Recipient type allele \"" + epRegAlleleName + "\" is not found and will be ignored. Use the picklist version of the report if you are having trouble selecting alleles.");
+            }
+            else {
+                allele.recipientTypeForCompat = true;
+                setAllelesToPut.add(allele);
+            }
         });
         var dfrs = [];
         $.each(Array.from(setAllelesToPut), function(index, allele) {
