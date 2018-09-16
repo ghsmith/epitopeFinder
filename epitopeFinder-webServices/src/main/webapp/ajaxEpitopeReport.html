@@ -83,11 +83,11 @@ table td.count {
     background-color: yellow;
 }
 
-tr:hover {
+tbody tr:hover {
     background-color: lightblue;
 }   
 
-tr:hover td {
+tbody tr:hover td {
     border-bottom: 1px solid black;
 }   
 
@@ -159,6 +159,7 @@ var sessionId;
 var locusGroups = [ {lgName: "ABC"}, {lgName: "DRB"}, {lgName: "DQ"}, {lgName: "DP"} ];
 var alleles = [];
 var epitopes = [];
+var epitopeMap = {};
 
 function getSessionId() {
     $("#working").show();
@@ -218,6 +219,52 @@ function getEpitopes() {
         dataType: "json"
     }).then(function(response) {
         epitopes = response;
+        $.each(epitopes, function(index, epitope) {
+            epitopeMap[epitope.epitopeName] = epitope;
+        })
+    });
+}
+
+function sort(columnName, direction) {
+    var rows = $('#tableReport tbody tr').get();
+    if(columnName == "epitopeName") {
+        rows.sort(function(a, b) {
+            var A = epitopeMap[$(a).data("epitope-name")].sequenceNumber;
+            var B = epitopeMap[$(b).data("epitope-name")].sequenceNumber;
+            if(A < B)      { return (direction == "asc" ? -1 : 1); }
+            else if(A > B) { return (direction == "asc" ? 1 : -1); }
+            else           { return  0; }
+        });
+    }
+    else if(columnName == "countPresent") {
+        rows.sort(function(a, b) {
+            var A = epitopeMap[$(a).data("epitope-name")].compatSabPanelCountPresent;
+            var B = epitopeMap[$(b).data("epitope-name")].compatSabPanelCountPresent;
+            if(A < B)      { return (direction == "asc" ? -1 : 1); }
+            else if(A > B) { return (direction == "asc" ? 1 : -1); }
+            else           { return  0; }
+        });
+    }
+    else if(columnName == "countAbsent") {
+        rows.sort(function(a, b) {
+            var A = epitopeMap[$(a).data("epitope-name")].compatSabPanelCountAbsent;
+            var B = epitopeMap[$(b).data("epitope-name")].compatSabPanelCountAbsent;
+            if(A < B)      { return (direction == "asc" ? -1 : 1); }
+            else if(A > B) { return (direction == "asc" ? 1 : -1); }
+            else           { return  0; }
+        });
+    }
+    else if(columnName == "countUnknown") {
+        rows.sort(function(a, b) {
+            var A = epitopeMap[$(a).data("epitope-name")].compatSabPanelCountUnknown;
+            var B = epitopeMap[$(b).data("epitope-name")].compatSabPanelCountUnknown;
+            if(A < B)      { return (direction == "asc" ? -1 : 1); }
+            else if(A > B) { return (direction == "asc" ? 1 : -1); }
+            else           { return  0; }
+        });
+    }
+    $.each(rows, function(index, row) {
+        $('#tableReport').children('tbody').append(row);
     });
 }
 
@@ -313,17 +360,22 @@ $(document).ready(function() {
                 });
             });
             var htmlReport = [];
-            htmlReport.push("<table id='tableReport'>");
-            htmlReport.push("<tr><th>epitope</th><th>&nbsp;+&nbsp;</th><th>&nbsp;0&nbsp;</th><th>&nbsp;?&nbsp;</th><th>references</th>")
+            htmlReport.push("<table id='tableReport'><thead>");
+            htmlReport.push("<tr><th><span style='font-size: 30px;'><a href='javascript:sort(\"epitopeName\", \"asc\")' style='text-decoration: none;'>&#8681;</a><a href='javascript:sort(\"epitopeName\", \"desc\")' style='text-decoration: none;'>&#8679;</a></span><br/>epitope</th>");
+            htmlReport.push("<th><span style='font-size: 30px;'><a href='javascript:sort(\"countPresent\", \"asc\")' style='text-decoration: none;'>&#8681;</a><a href='javascript:sort(\"countPresent\", \"desc\")' style='text-decoration: none;'>&#8679;</a></span><br/>&nbsp;+&nbsp;</th>");
+            htmlReport.push("<th><span style='font-size: 30px;'><a href='javascript:sort(\"countAbsent\", \"asc\")' style='text-decoration: none;'>&#8681;</a><a href='javascript:sort(\"countAbsent\", \"desc\")' style='text-decoration: none;'>&#8679;</a></span><br/>&nbsp;0&nbsp;</th>");
+            htmlReport.push("<th><span style='font-size: 30px;'><a href='javascript:sort(\"countUnknown\", \"asc\")' style='text-decoration: none;'>&#8681;</a><a href='javascript:sort(\"countUnknown\", \"desc\")' style='text-decoration: none;'>&#8679;</a></span><br/>&nbsp;?&nbsp;</th>");
+            htmlReport.push("<th>references</th>");
             $.each(alleles.filter(function(allele) { return allele.inCurrentSabPanel || allele.inEpRegSabPanel; }), function(index, allele) {
                 htmlReport.push("<th class='rotate" + (!allele.inCurrentSabPanel ? " bead-not-in-current-panel " : " ") + (allele.inCurrentSabPanel && !allele.inEpRegSabPanel ? " bead-not-in-ep-reg-panel " : " ") + (allele.recipientAntibodyForCompat ? " antibody-present " : "") + "'><div>" + allele.epRegAlleleName + "</div></th>");
             });
             htmlReport.push("</tr>");
             if(epitopes.filter(function(epitope) { return epitope.compatSabPanelCountPresent > 0; }).length == 0) {
-                htmlReport.push("<tr><td colspan='" + (alleles.filter(function(allele) { return allele.inCurrentSabPanel || allele.inEpRegSabPanel; }).length + 5) + "'><i>no recipient antibodies selected</i></td></tr>")
+                htmlReport.push("<tr data-epitope-name=''><td colspan='" + (alleles.filter(function(allele) { return allele.inCurrentSabPanel || allele.inEpRegSabPanel; }).length + 5) + "'><i>no recipient antibodies selected</i></td></tr>")
             }
+            htmlReport.push("</thead></tbody>")
             $.each(epitopes.filter(function(epitope) { return epitope.compatSabPanelCountPresent > 0; }), function(index, epitope) {
-                htmlReport.push("<tr>");
+                htmlReport.push("<tr data-epitope-name='" + epitope.epitopeName + "'>");
                 htmlReport.push("<td class='name'>" + epitope.epitopeName + "</td>");
                 htmlReport.push("<td class='count'>" + epitope.compatSabPanelCountPresent + "</td>");
                 htmlReport.push("<td class='count'>" + epitope.compatSabPanelCountAbsent + "</td>");
@@ -339,7 +391,7 @@ $(document).ready(function() {
                 });
                 htmlReport.push("</tr>");
             });
-            htmlReport.push("</table>");
+            htmlReport.push("</tbody></table>");
             htmlReport.push("<p>References");
             $.each(referenceMap, function(index, reference) {
                 htmlReport.push("<br/><span  style='white-space: nowrap;'>" + reference.refNo + ". [" + reference.epRegAlleleName + "] <a href='" + reference.sourceUrl + "'>" + reference.sourceUrl + "</a></span>");

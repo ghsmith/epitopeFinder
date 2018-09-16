@@ -591,10 +591,15 @@
 </html>
 
 <script>
-    
+
 // Document ready! Let's go...
 $(document).ready(function() {
-    
+
+    $("img.imageZoom").elevateZoom();    
+
+    if(document.cookie) { return; };
+    document.cookie = "inited";
+        
     $(document).ajaxError(function(event, request, settings, error) {
         console.log("request.responseText=" + request.responseText);
         alert("A web service error has occurred: " + error + " calling " + settings.url + ". See console for more details.");
@@ -644,7 +649,7 @@ $(document).ready(function() {
         $("#exampleGetSabPanelLink").click();
         $("#exampleGetSessionLink").click();
     }); }); }); }); });
-    $("img.imageZoom").elevateZoom();    
+    
 });
 
 </script>

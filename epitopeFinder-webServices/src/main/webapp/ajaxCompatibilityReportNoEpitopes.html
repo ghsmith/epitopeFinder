@@ -57,11 +57,11 @@ table td.alleleEpitope {
     text-align: center;
 }
 
-tr:hover {
+tbody tr:hover {
     background-color: lightblue;
 }   
 
-tr:hover td {
+tbody tr:hover td {
     border-bottom: 1px solid black;
 }   
 
@@ -311,8 +311,8 @@ $(document).ready(function() {
                 });
             });
             var htmlReport = [];
-            htmlReport.push("<table id='tableReport'>");
-            htmlReport.push("<tr><th>allele name</th><th>status</th></tr>")
+            htmlReport.push("<table id='tableReport'><thead>");
+            htmlReport.push("<tr><th>allele name</th><th>status</th></tr></thead><tbody>")
             if(alleles.filter(function(allele) { return allele.donorTypeForCompat; }).length == 0) {
                 htmlReport.push("<tr><td colspan='2'><i>no donor HLA types selected</i></td></tr>")
             }
@@ -322,7 +322,7 @@ $(document).ready(function() {
                 htmlReport.push("<td class='interp'>" + allele.compatInterpretation + "</td>");
                 htmlReport.push("</tr>");
             });
-            htmlReport.push("</table>");
+            htmlReport.push("</tbody></table>");
             htmlReport.push("<p>References");
             $.each(referenceMap, function(index, reference) {
                 htmlReport.push("<br/><span  style='white-space: nowrap;'>" + reference.refNo + ". [" + reference.epRegAlleleName + "] <a href='" + reference.sourceUrl + "'>" + reference.sourceUrl + "</a></span>");

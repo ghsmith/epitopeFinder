@@ -57,11 +57,11 @@ table td.alleleEpitope {
     text-align: center;
 }
 
-tr:hover {
+tbody tr:hover {
     background-color: lightblue;
 }   
 
-tr:hover td {
+tbody tr:hover td {
     border-bottom: 1px solid black;
 }   
 
@@ -309,7 +309,7 @@ $(document).ready(function() {
                 });
             });
             var htmlReport = [];
-            htmlReport.push("<table id='tableReport'>");
+            htmlReport.push("<table id='tableReport'><thead>");
             htmlReport.push("<tr><th rowspan='2'>allele name</th><th rowspan='2'>status</th>")
             htmlReport.push("<th colspan='" + epitopes.filter(function(epitope) { return epitope.compatSabPanelCountPresent > 0; }).length + "'>epitope name [reference(s)]</th></tr><tr>")
             $.each(epitopes.filter(function(epitope) { return epitope.compatSabPanelCountPresent > 0; }), function(index, epitope) {
@@ -329,7 +329,7 @@ $(document).ready(function() {
             $.each(epitopes.filter(function(epitope) { return epitope.compatSabPanelCountPresent > 0; }), function(index, epitope) {
                 htmlReport.push("<td class='alleleEpitope'>" + epitope.compatSabPanelCountPresent + "</td>");
             });
-            htmlReport.push("</tr>")
+            htmlReport.push("</tr></thead><tbody>")
             if(alleles.filter(function(allele) { return allele.donorTypeForCompat; }).length == 0) {
                 htmlReport.push("<tr><td colspan='" + (epitopes.filter(function(epitope) { return epitope.compatSabPanelCountPresent > 0; }).length + 2) + "'><i>no donor HLA types selected</i></td></tr>")
             }
@@ -348,7 +348,7 @@ $(document).ready(function() {
                 });
                 htmlReport.push("</tr>");
             });
-            htmlReport.push("</table>");
+            htmlReport.push("</tbody></table>");
             htmlReport.push("<p>References");
             $.each(referenceMap, function(index, reference) {
                 htmlReport.push("<br/><span  style='white-space: nowrap;'>" + reference.refNo + ". [" + reference.epRegAlleleName + "] <a href='" + reference.sourceUrl + "'>" + reference.sourceUrl + "</a></span>");
