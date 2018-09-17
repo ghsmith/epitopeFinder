@@ -119,10 +119,11 @@ tbody tr:hover td {
     </p>
 
     <table style="width: 100%;">
-        <tr><td>NEI</td><td>Not Electronically Incompatible</td><td>There is no inferred reactivity with epitope(s) of this allele.</td></tr>
-        <tr><td>EI</td><td>Electronically Incompatible</td><td>There is inferred reactivity with epitope(s) of this allele. A reactive antibody is inferred when 100% of the single antigen bead (SAB) panel beads bearing the epitope are positive.</td></tr>
-        <tr><td>I</td><td>Incompatible</td><td>The SAB for this allele is positive.</td></tr>
-        <tr><td>AA</td><td>Auto-antibody</td><td>The SAB for this allele is positive, but this is also a recipient allele.</td></tr>
+        <tr><td style='white-space: nowrap;'>NEI</td><td>Not Electronically Incompatible</td><td>There is no inferred reactivity with epitope(s) of this allele.</td></tr>
+        <tr><td style='white-space: nowrap;'>NEI-R</td><td>Not Electronically Incompatible-Review</td><td>This allele has an epitope where 100% of the single antigen bead (SAB) panel beads bearing the epitope are positive, but some beads that don't bear the epitope are also positive. You may want to consider reactivity with this epitope if there isn't a better solution.</td></tr>
+        <tr><td style='white-space: nowrap;'>EI</td><td>Electronically Incompatible</td><td>There is inferred reactivity with epitope(s) of this allele. A reactive antibody is inferred when 100% of the single antigen bead (SAB) panel beads bearing the epitope are positive and none of the beads without the epitope are positive.</td></tr>
+        <tr><td style='white-space: nowrap;'>I</td><td>Incompatible</td><td>The SAB for this allele is positive.</td></tr>
+        <tr><td style='white-space: nowrap;'>AA</td><td>Auto-antibody</td><td>The SAB for this allele is positive, but this is also a recipient allele.</td></tr>
     </table>
 
     <p></p>
