@@ -143,19 +143,35 @@ public class AlleleFinder {
 
         // 3. Handle electronically incompatible (EI).
         getAlleleList().stream().filter((allele) -> (allele.getCompatInterpretation() == null)).forEach((allele) -> {
-            epitopeFinder.getEpitopeListByEpRegLocusGroup(allele.getEpRegLocusGroup()).stream().filter((epitope) -> (epitope.getCompatSabPanelPctPresent() != null && epitope.getCompatSabPanelPctPresent() == 100)).forEach((epitope) -> {
+            epitopeFinder.getEpitopeListByEpRegLocusGroup(allele.getEpRegLocusGroup()).stream().filter((epitope) -> (
+                epitope.getCompatSabPanelPctPresent() != null
+                && epitope.getCompatSabPanelPctPresent() == 100
+                && epitope.getCompatSabPanelCountPresent() == getAlleleList().stream().filter((x) -> (x.getRecipientAntibodyForCompat())).count()
+            )).forEach((epitope) -> {
                 if(epitope.getAlleleMap().values().stream().filter((epitopeAllele) -> (allele.getEpRegAlleleName().equals(epitopeAllele.getEpRegAlleleName()))).findFirst().isPresent()) {
                     allele.setCompatInterpretation("EI");
                 }
             });
         });
 
-        // 4. Handle not electronically incompatible (NEI).
+        // 4. Handle not electornically incompatible - review (NEI-R)
+        getAlleleList().stream().filter((allele) -> (allele.getCompatInterpretation() == null)).forEach((allele) -> {
+            epitopeFinder.getEpitopeListByEpRegLocusGroup(allele.getEpRegLocusGroup()).stream().filter((epitope) -> (
+                epitope.getCompatSabPanelPctPresent() != null
+                && epitope.getCompatSabPanelPctPresent() == 100
+            )).forEach((epitope) -> {
+                if(epitope.getAlleleMap().values().stream().filter((epitopeAllele) -> (allele.getEpRegAlleleName().equals(epitopeAllele.getEpRegAlleleName()))).findFirst().isPresent()) {
+                    allele.setCompatInterpretation("NEI-R");
+                }
+            });
+        });
+        
+        // 5. Handle not electronically incompatible (NEI).
         getAlleleList().stream().filter((allele) -> (allele.getCompatInterpretation() == null)).forEach((allele) -> {
            allele.setCompatInterpretation("NEI");
         });
         
-        // 5. Set the epitope map up.
+        // 6. Set the epitope map up.
         epitopeFinder.getEpitopeList().stream().filter((epitope) -> (epitope.getCompatSabPanelPctPresent() != null && epitope.getCompatSabPanelPctPresent() > 0)).forEach((epitope) -> {
             epitope.getAlleleMap().values().stream().forEach((alleleRef) -> {
                 if(getAlleleByEpRegAlleleName(alleleRef.getEpRegAlleleName()) != null) { // epitope registry references some NULL alleles which I'm not pulling in from IMGT... not sure what this means
