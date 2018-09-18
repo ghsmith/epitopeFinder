@@ -163,16 +163,6 @@ function resetSession() {
     });
 }
 
-function computeCompat() {
-    $("#working").show();
-    return $.ajax({
-        url: "/epitopeFinder/resources/session/computeCompat",
-        dataType: "json",
-        type: "PUT",
-        contentType: "application/json"
-    });
-}
-
 function getAlleles() {
     $("#working").show();
     return $.ajax({
@@ -292,7 +282,7 @@ $(document).ready(function() {
             delete allele.$order;
             dfrs.push(putAllele(allele));
         });
-        $.when.apply(null, dfrs).then(computeCompat)
+        $.when.apply(null, dfrs)
         .then(getAlleles)
         .then(getEpitopes)
         .done(function() {

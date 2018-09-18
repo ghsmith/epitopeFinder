@@ -29,12 +29,4 @@ public class Session {
         request.getSession().invalidate();
     }
     
-    @PUT
-    @Path("computeCompat")
-    @Produces("application/json")
-    public void putComputeCompat() {
-        SessionFilter.epRegEpitopeFinder.get().computeCompatProperties(SessionFilter.alleleFinder.get());
-        SessionFilter.alleleFinder.get().computeCompatProperties(SessionFilter.epRegEpitopeFinder.get());
-    }
-    
 }

@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 public class SessionFilter implements Filter {
 
     protected static ThreadLocal<String> sessionMutex = new ThreadLocal<>();
+    protected static ThreadLocal<Boolean[]> computedPropertiesStale = new ThreadLocal<>();
     protected static ThreadLocal<AlleleFinder> alleleFinder = new ThreadLocal<>();
     protected static ThreadLocal<SabPanelFinder> sabPanelFinder = new ThreadLocal<>();
     protected static ThreadLocal<EpRegEpitopeFinder> epRegEpitopeFinder = new ThreadLocal<>();
@@ -61,20 +62,24 @@ public class SessionFilter implements Filter {
         }
         
         synchronized(sessionMutex) {
+            Boolean[] computedPropertiesStale = (Boolean[])((HttpServletRequest)request).getSession().getAttribute("computedPropertiesStale");
             AlleleFinder alleleFinder = (AlleleFinder)((HttpServletRequest)request).getSession().getAttribute("alleleFinder");
             SabPanelFinder sabPanelFinder = (SabPanelFinder)((HttpServletRequest)request).getSession().getAttribute("sabPanelFinder");
             EpRegEpitopeFinder epRegEpitopeFinder = (EpRegEpitopeFinder)((HttpServletRequest)request).getSession().getAttribute("epRegEpitopeFinder");
-            if(alleleFinder == null || sabPanelFinder == null || epRegEpitopeFinder == null) {
+            if(computedPropertiesStale == null || alleleFinder == null || sabPanelFinder == null || epRegEpitopeFinder == null) {
+                computedPropertiesStale = new Boolean[] { false };
                 alleleFinder = new AlleleFinder(request.getServletContext().getInitParameter("imgtXmlFileName"));
                 sabPanelFinder = new SabPanelFinder(request.getServletContext().getInitParameter("emoryXmlFileName"));
                 epRegEpitopeFinder = new EpRegEpitopeFinder();
                 alleleFinder.assignCurrentSabPanelAlleles(sabPanelFinder);
                 alleleFinder.assignEpRegSabPanelAlleles(epRegEpitopeFinder);
                 epRegEpitopeFinder.assignCurrentSabPanelAlleles(sabPanelFinder);
+                ((HttpServletRequest)request).getSession().setAttribute("computedPropertiesStale", computedPropertiesStale);
                 ((HttpServletRequest)request).getSession().setAttribute("alleleFinder", alleleFinder);
                 ((HttpServletRequest)request).getSession().setAttribute("sabPanelFinder", sabPanelFinder);
                 ((HttpServletRequest)request).getSession().setAttribute("epRegEpitopeFinder", epRegEpitopeFinder);
             }
+            SessionFilter.computedPropertiesStale.set(computedPropertiesStale);
             SessionFilter.sessionMutex.set(sessionMutex);
             SessionFilter.alleleFinder.set(alleleFinder);
             SessionFilter.sabPanelFinder.set(sabPanelFinder);

@@ -23,6 +23,11 @@ public class EpRegEpitopes {
     @GET
     @Produces("application/json")
     public List<EpRegEpitope> getJson(@QueryParam("panelAllelesOnly") String panelAllelesOnly, @DefaultValue("-1") @QueryParam("startSequenceNumber") int startSequenceNumber, @DefaultValue("-1") @QueryParam("endSequenceNumber") int endSequenceNumber) {
+        if(SessionFilter.computedPropertiesStale.get()[0]) {
+            SessionFilter.epRegEpitopeFinder.get().computeCompatProperties(SessionFilter.alleleFinder.get());
+            SessionFilter.alleleFinder.get().computeCompatProperties(SessionFilter.epRegEpitopeFinder.get());
+            SessionFilter.computedPropertiesStale.get()[0] = false;
+        }
         List<EpRegEpitope> epitopes = SessionFilter.epRegEpitopeFinder.get().getEpitopeList();
         // panelAllelesOnly saves bandwidth
         if("true".equals(panelAllelesOnly)) {
@@ -47,6 +52,11 @@ public class EpRegEpitopes {
     @Path("{locusGroup}")
     @Produces("application/json")
     public List<EpRegEpitope> getJson(@PathParam("locusGroup") String locusGroup, @QueryParam("panelAllelesOnly") String panelAllelesOnly, @DefaultValue("-1") @QueryParam("startSequenceNumber") int startSequenceNumber, @DefaultValue("-1") @QueryParam("endSequenceNumber") int endSequenceNumber) {
+        if(SessionFilter.computedPropertiesStale.get()[0]) {
+            SessionFilter.epRegEpitopeFinder.get().computeCompatProperties(SessionFilter.alleleFinder.get());
+            SessionFilter.alleleFinder.get().computeCompatProperties(SessionFilter.epRegEpitopeFinder.get());
+            SessionFilter.computedPropertiesStale.get()[0] = false;
+        }
         List<EpRegEpitope> epitopes = SessionFilter.epRegEpitopeFinder.get().getEpitopeListByEpRegLocusGroup(locusGroup);
         // panelAllelesOnly saves bandwidth
         if("true".equals(panelAllelesOnly)) {
@@ -71,6 +81,11 @@ public class EpRegEpitopes {
     @Path("{locusGroup}/{epitopeName}")
     @Produces("application/json")
     public EpRegEpitope getJsonAllele(@PathParam("locusGroup") String locusGroup, @PathParam("epitopeName") String epitopeName, @QueryParam("panelAllelesOnly") String panelAllelesOnly) {
+        if(SessionFilter.computedPropertiesStale.get()[0]) {
+            SessionFilter.epRegEpitopeFinder.get().computeCompatProperties(SessionFilter.alleleFinder.get());
+            SessionFilter.alleleFinder.get().computeCompatProperties(SessionFilter.epRegEpitopeFinder.get());
+            SessionFilter.computedPropertiesStale.get()[0] = false;
+        }
         EpRegEpitope epitope = SessionFilter.epRegEpitopeFinder.get().getEpitope(locusGroup, epitopeName);
         // panelAllelesOnly saves bandwidth
         if("true".equals(panelAllelesOnly)) {

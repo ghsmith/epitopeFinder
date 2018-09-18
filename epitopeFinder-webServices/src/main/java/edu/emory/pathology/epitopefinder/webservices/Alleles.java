@@ -22,6 +22,11 @@ public class Alleles {
     @GET
     @Produces("application/json")
     public List<Allele> getJson(@QueryParam("locusGroup") String locusGroup, @DefaultValue("-1") @QueryParam("startSequenceNumber") int startSequenceNumber, @DefaultValue("-1") @QueryParam("endSequenceNumber") int endSequenceNumber) {
+        if(SessionFilter.computedPropertiesStale.get()[0]) {
+            SessionFilter.epRegEpitopeFinder.get().computeCompatProperties(SessionFilter.alleleFinder.get());
+            SessionFilter.alleleFinder.get().computeCompatProperties(SessionFilter.epRegEpitopeFinder.get());
+            SessionFilter.computedPropertiesStale.get()[0] = false;
+        }
         List<Allele> alleles = null;
         if(locusGroup != null) {
             alleles = SessionFilter.alleleFinder.get().getAlleleListByEpRegLocusGroup(locusGroup);
@@ -39,6 +44,11 @@ public class Alleles {
     @Path("{alleleName}")
     @Produces("application/json")
     public Allele getJsonAllele(@PathParam("alleleName") String alleleName) {
+        if(SessionFilter.computedPropertiesStale.get()[0]) {
+            SessionFilter.epRegEpitopeFinder.get().computeCompatProperties(SessionFilter.alleleFinder.get());
+            SessionFilter.alleleFinder.get().computeCompatProperties(SessionFilter.epRegEpitopeFinder.get());
+            SessionFilter.computedPropertiesStale.get()[0] = false;
+        }
         Allele allele = SessionFilter.alleleFinder.get().getAllele(alleleName);
         // Fall back to the abbreviated epitope registry allele name.
         if(allele == null) {
@@ -59,6 +69,7 @@ public class Alleles {
         allele.setRecipientAntibodyForCompat(updateAllele.getRecipientAntibodyForCompat());
         allele.setRecipientTypeForCompat(updateAllele.getRecipientTypeForCompat());
         allele.setDonorTypeForCompat(updateAllele.getDonorTypeForCompat());
+        SessionFilter.computedPropertiesStale.get()[0] = true;
     }
     
 }
