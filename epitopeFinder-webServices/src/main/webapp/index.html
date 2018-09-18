@@ -628,12 +628,6 @@ $(document).ready(function() {
         contentType: "application/json",
         data: JSON.stringify(allele)
     }).then(function() {
-    $.ajax({
-        url: "/epitopeFinder/resources/session/computeCompat",
-        dataType: "json",
-        type: "PUT",
-        contentType: "application/json"
-    }).then(function() {
         $("#exampleGetAllelesLink").click();
         $("#exampleGetAlleleLink").click();
         $("#exampleGetEpitopesLink").click();
@@ -642,7 +636,7 @@ $(document).ready(function() {
         $("#exampleGetSabPanelsLink").click();
         $("#exampleGetSabPanelLink").click();
         $("#exampleGetSessionLink").click();
-    }); }); }); }); });
+    }); }); }); });
     
 });
 
