@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 <sabPanels xmlns="http://pathology.emory.edu/hladpb1HypervariableRegion" xmlns:xs="http://www.w3.org/2001/XMLSchema" xs:noNamespaceSchemaLocation="http://pathology.emory.edu/hladpb1HypervariableRegion.xsd">
     <sabPanel epRegLocusGroup="ABC">
-        <!-- Source: LABScreen® Single Antigen HLA Class I - Combi, Lot 011 [LS1A04]
+        <!-- Source: LABScreen Single Antigen HLA Class I - Combi, Lot 011 [LS1A04]
 		     https://www.onelambda.com/content/dam/onelambda/en/TDX/Documents/securedocs/docs/LOT_SPECIFIC/LS1A04_011_WS.pdf -->
         <sab epRegAlleleName="A*01:01"/>
         <sab epRegAlleleName="A*02:01"/>
@@ -100,7 +100,7 @@
         <sab epRegAlleleName="C*16:01"/>
         <sab epRegAlleleName="C*17:01"/>
         <sab epRegAlleleName="C*18:02"/>
-        <!-- Source: Single Antigen HLA Class I Supplement - Group 1, Lot 004 [LS1ASP01]
+        <!-- Source: LabScreen Single Antigen HLA Class I Supplement - Group 1, Lot 004 [LS1ASP01]
 		     https://www.onelambda.com/content/dam/onelambda/en/TDX/Documents/securedocs/docs/LOT_SPECIFIC/LS1ASP01_004_WS.pdf
 		-->
         <sab epRegAlleleName="A*01:02"/>
