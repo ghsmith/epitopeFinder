@@ -69,7 +69,7 @@ public class SessionFilter implements Filter {
             if(computedPropertiesStale == null || alleleFinder == null || sabPanelFinder == null || epRegEpitopeFinder == null) {
                 computedPropertiesStale = new Boolean[] { false };
                 alleleFinder = new AlleleFinder(request.getServletContext().getInitParameter("imgtXmlFileName"));
-                sabPanelFinder = new SabPanelFinder(request.getServletContext().getInitParameter("emoryXmlFileName"));
+                sabPanelFinder = new SabPanelFinder(request.getServletContext().getInitParameter("emoryXmlFileName"), request.getServletContext().getInitParameter("reagentLotNumber"));
                 epRegEpitopeFinder = new EpRegEpitopeFinder();
                 alleleFinder.assignCurrentSabPanelAlleles(sabPanelFinder);
                 alleleFinder.assignEpRegSabPanelAlleles(epRegEpitopeFinder);
