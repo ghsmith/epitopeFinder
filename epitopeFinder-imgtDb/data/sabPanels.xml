@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
-<sabPanels xmlns="http://pathology.emory.edu/hladpb1HypervariableRegion" xmlns:xs="http://www.w3.org/2001/XMLSchema" xs:noNamespaceSchemaLocation="http://pathology.emory.edu/hladpb1HypervariableRegion.xsd">
+<reagentLots xmlns="http://pathology.emory.edu/sabPanels" xmlns:xs="http://www.w3.org/2001/XMLSchema" xs:noNamespaceSchemaLocation="http://pathology.emory.edu/sabPanels.xsd">
+
+  <reagentLot lotNumber="12">
+
+   <sabPanels>
     <sabPanel epRegLocusGroup="ABC">
         <!-- Source: LABScreen Single Antigen HLA Class I - Combi, Lot 011 [LS1A04]
 		     https://www.onelambda.com/content/dam/onelambda/en/TDX/Documents/securedocs/docs/LOT_SPECIFIC/LS1A04_011_WS.pdf -->
@@ -290,4 +294,51 @@
         <sab epRegAlleleName="DPB1*105:01"/>
         <sab epRegAlleleName="DPB1*107:01"/>
     </sabPanel>
-</sabPanels>
+   </sabPanels>
+   
+  </reagentLot>
+
+  <reagentLot lotNumber="12-truncated">
+        
+    <sabPanel epRegLocusGroup="ABC">
+    </sabPanel>
+    <sabPanel epRegLocusGroup="DRB">
+    </sabPanel>
+    <sabPanel epRegLocusGroup="DQ">
+    </sabPanel>
+    <sabPanel epRegLocusGroup="DP">
+		<!-- Source: LABScreen Single Antigen HLA Class II - Group 1, Lot 013 [LS2A01]
+		     https://www.onelambda.com/content/dam/onelambda/en/TDX/Documents/securedocs/docs/LOT_SPECIFIC/LS2A01_013_WS.pdf -->
+        <sab epRegAlleleName="DPB1*01:01"/>
+        <sab epRegAlleleName="DPB1*02:01"/>
+        <!--sab epRegAlleleName="DPB1*02:02"/-->
+        <sab epRegAlleleName="DPB1*03:01"/>
+        <sab epRegAlleleName="DPB1*04:01"/>
+        <sab epRegAlleleName="DPB1*04:02"/>
+        <sab epRegAlleleName="DPB1*05:01"/>
+        <sab epRegAlleleName="DPB1*06:01"/>
+        <sab epRegAlleleName="DPB1*09:01"/>
+        <sab epRegAlleleName="DPB1*10:01"/>
+        <sab epRegAlleleName="DPB1*11:01"/>
+        <sab epRegAlleleName="DPB1*13:01"/>
+        <sab epRegAlleleName="DPB1*14:01"/>
+        <sab epRegAlleleName="DPB1*15:01"/>
+        <sab epRegAlleleName="DPB1*17:01"/>
+        <sab epRegAlleleName="DPB1*18:01"/>
+        <sab epRegAlleleName="DPB1*19:01"/>
+        <sab epRegAlleleName="DPB1*20:01"/>
+        <sab epRegAlleleName="DPB1*23:01"/>
+        <!--sab epRegAlleleName="DPB1*26:01"/-->
+        <sab epRegAlleleName="DPB1*28:01"/>
+        <!--sab epRegAlleleName="DPB1*30:01"/>
+        <sab epRegAlleleName="DPB1*31:01"/>
+        <sab epRegAlleleName="DPB1*40:01"/>
+        <sab epRegAlleleName="DPB1*85:01"/>
+        <sab epRegAlleleName="DPB1*105:01"/>
+        <sab epRegAlleleName="DPB1*107:01"/-->
+    </sabPanel>
+   </sabPanels>
+   
+  </reagentLot>
+  
+</reagentLots>

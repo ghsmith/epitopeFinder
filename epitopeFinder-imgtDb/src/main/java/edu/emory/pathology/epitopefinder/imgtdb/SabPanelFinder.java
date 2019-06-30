@@ -18,10 +18,16 @@ public class SabPanelFinder {
     private static final Logger LOG = Logger.getLogger(SabPanelFinder.class.getName());
     
     private String xmlFileName;
+    private String reagentLotNumber;
     private List<SabPanel> sabPanelList;
 
-    public SabPanelFinder(String xmlFileName) {
+    public SabPanelFinder(String reagentLotNumber) {
+        this.reagentLotNumber = reagentLotNumber;
+    }
+    
+    public SabPanelFinder(String xmlFileName, String reagentLotNumber) {
         this.xmlFileName = xmlFileName;
+        this.reagentLotNumber = reagentLotNumber;
     }
 
     public SabPanel getSabPanel(String epRegLocusGroup) {
@@ -37,8 +43,10 @@ public class SabPanelFinder {
         if(sabPanelList == null) {
             sabPanelList = new ArrayList();
             JaxbEmoryFinder emoryFinder = new JaxbEmoryFinder(xmlFileName);
-            edu.emory.pathology.epitopefinder.imgtdb.jaxb.emory.SabPanels emorySabPanels = emoryFinder.getSabPanels();
-            emorySabPanels.getSabPanel().stream().forEach((emorySabPanel) -> {
+            edu.emory.pathology.epitopefinder.imgtdb.jaxb.emory.ReagentLots emoryReagentLots = emoryFinder.getReagentLots();
+            
+            emoryReagentLots.getReagentLot().stream().filter((emoryReagentLot) -> (emoryReagentLot.getLotNumber().equals(reagentLotNumber)))
+            .findFirst().get().getSabPanels().getSabPanel().stream().forEach((emorySabPanel) -> {
                 SabPanel sabPanel = new SabPanel();
                 sabPanelList.add(sabPanel);
                 sabPanel.setEpRegLocusGroup(emorySabPanel.getEpRegLocusGroup());

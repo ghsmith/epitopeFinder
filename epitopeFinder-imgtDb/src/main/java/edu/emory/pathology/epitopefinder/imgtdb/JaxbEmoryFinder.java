@@ -1,6 +1,6 @@
 package edu.emory.pathology.epitopefinder.imgtdb;
 
-import edu.emory.pathology.epitopefinder.imgtdb.jaxb.emory.SabPanels;
+import edu.emory.pathology.epitopefinder.imgtdb.jaxb.emory.ReagentLots;
 import java.io.File;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBContext;
@@ -18,7 +18,7 @@ public class JaxbEmoryFinder {
     private static final Logger LOG = Logger.getLogger(JaxbEmoryFinder.class.getName());
 
     private String xmlFileName = "/tmp/sabPanels.xml";
-    private SabPanels sabPanels;
+    private ReagentLots reagentLots;
 
     public JaxbEmoryFinder() {
     }
@@ -29,18 +29,18 @@ public class JaxbEmoryFinder {
         }
     }
     
-    public SabPanels getSabPanels() {
-        if(sabPanels == null) {
+    public ReagentLots getReagentLots() {
+        if(reagentLots == null) {
             try {
                 JAXBContext jc0 = JAXBContext.newInstance("edu.emory.pathology.epitopefinder.imgtdb.jaxb.emory");
-                sabPanels = (SabPanels)jc0.createUnmarshaller().unmarshal(new File(xmlFileName));
+                reagentLots = (ReagentLots)jc0.createUnmarshaller().unmarshal(new File(xmlFileName));
             }
             catch(JAXBException e) {
                 throw new RuntimeException(e);
             }
-            LOG.info(String.format("%d SAB panels loaded from Emory XML database", sabPanels.getSabPanel().size()));
+            LOG.info(String.format("%d reagent lots loaded from Emory XML database", reagentLots.getReagentLot().size()));
         }
-        return sabPanels;
+        return reagentLots;
     }
     
 }

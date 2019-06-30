@@ -1,5 +1,22 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://pathology.emory.edu/hladpb1HypervariableRegion" targetNamespace="http://pathology.emory.edu/hladpb1HypervariableRegion" elementFormDefault="qualified">
 
+	<xs:element name="reagentLots">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="reagentLot" maxOccurs="unbounded" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+		
+	<xs:element name="reagentLot">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="sabPanels"/>
+			</xs:sequence>
+			<xs:attribute type="xs:string" name="lotNumber"/>
+		</xs:complexType>
+	</xs:element>
+    
 	<xs:element name="sabPanels">
 		<xs:complexType>
 			<xs:sequence>
