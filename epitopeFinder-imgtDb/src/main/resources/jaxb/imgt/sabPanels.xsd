@@ -1,4 +1,4 @@
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://pathology.emory.edu/hladpb1HypervariableRegion" targetNamespace="http://pathology.emory.edu/hladpb1HypervariableRegion" elementFormDefault="qualified">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://pathology.emory.edu/sabPanels" targetNamespace="http://pathology.emory.edu/sabPanels" elementFormDefault="qualified">
 
 	<xs:element name="reagentLots">
 		<xs:complexType>
