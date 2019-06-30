@@ -300,6 +300,7 @@
 
   <reagentLot lotNumber="12-truncated">
         
+   <sabPanels>
     <sabPanel epRegLocusGroup="ABC">
     </sabPanel>
     <sabPanel epRegLocusGroup="DRB">
