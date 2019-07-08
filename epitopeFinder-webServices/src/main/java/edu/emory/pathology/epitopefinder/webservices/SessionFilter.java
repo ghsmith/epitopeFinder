@@ -2,6 +2,7 @@ package edu.emory.pathology.epitopefinder.webservices;
 
 import edu.emory.pathology.epitopefinder.imgtdb.AlleleFinder;
 import edu.emory.pathology.epitopefinder.imgtdb.EpRegEpitopeFinder;
+import edu.emory.pathology.epitopefinder.imgtdb.ReagentLotFinder;
 import edu.emory.pathology.epitopefinder.imgtdb.SabPanelFinder;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -31,6 +32,7 @@ public class SessionFilter implements Filter {
     protected static ThreadLocal<AlleleFinder> alleleFinder = new ThreadLocal<>();
     protected static ThreadLocal<SabPanelFinder> sabPanelFinder = new ThreadLocal<>();
     protected static ThreadLocal<EpRegEpitopeFinder> epRegEpitopeFinder = new ThreadLocal<>();
+    protected static ThreadLocal<ReagentLotFinder> reagentLotFinder = new ThreadLocal<>();
     
     private static final boolean debug = false;
 
@@ -66,6 +68,7 @@ public class SessionFilter implements Filter {
             AlleleFinder alleleFinder = (AlleleFinder)((HttpServletRequest)request).getSession().getAttribute("alleleFinder");
             SabPanelFinder sabPanelFinder = (SabPanelFinder)((HttpServletRequest)request).getSession().getAttribute("sabPanelFinder");
             EpRegEpitopeFinder epRegEpitopeFinder = (EpRegEpitopeFinder)((HttpServletRequest)request).getSession().getAttribute("epRegEpitopeFinder");
+            ReagentLotFinder reagentLotFinder = (ReagentLotFinder)((HttpServletRequest)request).getSession().getAttribute("reagentLotFinder");
             if(computedPropertiesStale == null || alleleFinder == null || sabPanelFinder == null || epRegEpitopeFinder == null) {
                 computedPropertiesStale = new Boolean[] { false };
                 alleleFinder = new AlleleFinder(request.getServletContext().getInitParameter("imgtXmlFileName"));
@@ -74,16 +77,19 @@ public class SessionFilter implements Filter {
                 alleleFinder.assignCurrentSabPanelAlleles(sabPanelFinder);
                 alleleFinder.assignEpRegSabPanelAlleles(epRegEpitopeFinder);
                 epRegEpitopeFinder.assignCurrentSabPanelAlleles(sabPanelFinder);
+                reagentLotFinder = new ReagentLotFinder(request.getServletContext().getInitParameter("emoryXmlFileName"));
                 ((HttpServletRequest)request).getSession().setAttribute("computedPropertiesStale", computedPropertiesStale);
                 ((HttpServletRequest)request).getSession().setAttribute("alleleFinder", alleleFinder);
                 ((HttpServletRequest)request).getSession().setAttribute("sabPanelFinder", sabPanelFinder);
                 ((HttpServletRequest)request).getSession().setAttribute("epRegEpitopeFinder", epRegEpitopeFinder);
+                ((HttpServletRequest)request).getSession().setAttribute("reagentLotFinder", reagentLotFinder);
             }
             SessionFilter.computedPropertiesStale.set(computedPropertiesStale);
             SessionFilter.sessionMutex.set(sessionMutex);
             SessionFilter.alleleFinder.set(alleleFinder);
             SessionFilter.sabPanelFinder.set(sabPanelFinder);
             SessionFilter.epRegEpitopeFinder.set(epRegEpitopeFinder);
+            SessionFilter.reagentLotFinder.set(reagentLotFinder);
         }
         
     }    

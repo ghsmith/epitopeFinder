@@ -16,6 +16,13 @@ import javax.ws.rs.Produces;
 public class SabPanels {
 
     @GET
+    @Path("reagentLotNumber")
+    @Produces("application/json")
+    public String getJsonReagentLotNumber() {
+        return SessionFilter.sabPanelFinder.get().getReagentLotNumber();
+    }
+
+    @GET
     @Produces("application/json")
     public List<SabPanel> getJson() {
         return SessionFilter.sabPanelFinder.get().getSabPanelList();

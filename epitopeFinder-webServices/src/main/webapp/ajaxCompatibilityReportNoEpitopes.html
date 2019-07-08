@@ -86,8 +86,10 @@ tbody tr:hover td {
     <p>This is the abridged version of the report. A <a href="/epitopeFinder/ajaxCompatibilityReport.html">full version<a> is also available.</p>
 
     <p>
-        The IMGT allele database version is <span id="imgtDbVersion">...</span>.
-        The session ID is <span id="sessionId">...</span>.
+        The IMGT allele database version is <span id="imgtDbVersion">...</span>
+        and the single antigen bead (SAB) reagent lot number is
+        <select id="reagentLotNumberSelect"></select>. The session ID is
+        <span id="sessionId">...</span>.
     </p>
     
     <p>
@@ -134,10 +136,12 @@ tbody tr:hover td {
     
     <p style="font-size: x-small;">*This application is currently using SAB alleles contained in the following four (4) panels:
 <br/>
-<br/>1. LABScreen Single Antigen HLA Class I - Combi, Lot 011 [<a href="https://www.onelambda.com/content/dam/onelambda/en/TDX/Documents/securedocs/docs/LOT_SPECIFIC/LS1A04_011_WS.pdf">LS1A04</a>]
-<br/>2. LABScreen Single Antigen HLA Class I Supplement - Group 1, Lot 004 [<a href="https://www.onelambda.com/content/dam/onelambda/en/TDX/Documents/securedocs/docs/LOT_SPECIFIC/LS1ASP01_004_WS.pdf">LS1ASP01</a>]
-<br/>3. LABScreen Single Antigen HLA Class II - Group 1, Lot 013 [<a href="https://www.onelambda.com/content/dam/onelambda/en/TDX/Documents/securedocs/docs/LOT_SPECIFIC/LS2A01_013_WS.pdf">LS2A01</a>]
-<br/>4. LABScreen Single Antigen HLA Class II Supplement - Group 1 Lot 004 [<a href="https://www.onelambda.com/content/dam/onelambda/en/TDX/Documents/securedocs/docs/LOT_SPECIFIC/LS2ASP01_004_WS.pdf">LS2ASP01</a>]
+<br/>1. LABScreen Single Antigen HLA Class I - Combi (various lots) [<a href="https://www.onelambda.com/content/dam/onelambda/en/TDX/Documents/securedocs/docs/LOT_SPECIFIC/LS1A04_011_WS.pdf">LS1A04</a>]
+<br/>2. LABScreen Single Antigen HLA Class I Supplement* (various lots) [<a href="https://www.onelambda.com/content/dam/onelambda/en/TDX/Documents/securedocs/docs/LOT_SPECIFIC/LS1ASP01_004_WS.pdf">LS1ASP01</a>]
+<br/>3. LABScreen Single Antigen HLA Class II - Group 1 (various lots) [<a href="https://www.onelambda.com/content/dam/onelambda/en/TDX/Documents/securedocs/docs/LOT_SPECIFIC/LS2A01_013_WS.pdf">LS2A01</a>]
+<br/>4. LABScreen Single Antigen HLA Class II Supplement* (various lots) [<a href="https://www.onelambda.com/content/dam/onelambda/en/TDX/Documents/securedocs/docs/LOT_SPECIFIC/LS2ASP01_004_WS.pdf">LS2ASP01</a>]
+<br/>
+<br/>*The supplemental panel alleles may not be used, depending on which reagent lot is selected.
 <br/>
 <br/>Allele names with a <span style="background: lightgray;">gray</span> background are not in the HLA Epitope Registry's list of alleles in commonly used Luminex panels (although they are in our panels).
     </p>
@@ -154,6 +158,8 @@ var sessionId;
 var locusGroups = [ {lgName: "ABC"}, {lgName: "DRB"}, {lgName: "DQ"}, {lgName: "DP"} ];
 var alleles = [];
 var epitopes = [];
+var reagentLotNumber;
+var reagentLots = [];
 
 function getSessionId() {
     $("#working").show();
@@ -206,6 +212,37 @@ function getEpitopes() {
     });
 }
 
+function getReagentLotNumber() {
+    $("#working").show();
+    return $.ajax({
+        url: "/epitopeFinder/resources/sabPanels/reagentLotNumber",
+        dataType: "text"
+    }).then(function(response) {
+        reagentLotNumber = response;
+    });
+}
+
+function getReagentLots() {
+    $("#working").show();
+    return $.ajax({
+        url: "/epitopeFinder/resources/reagentLots",
+        dataType: "json"
+    }).then(function(response) {
+        reagentLots = response;
+    });
+}
+
+function putReagentLot(reagentLot) {
+    $("#working").show();
+    return $.ajax({
+        url: "/epitopeFinder/resources/session/reagentLot",
+        dataType: "json",
+        type: "PUT",
+        contentType: "application/json",
+        data: reagentLot
+    });
+}
+
 // Document ready! Let's go...
 $(document).ready(function() {
 
@@ -217,7 +254,15 @@ $(document).ready(function() {
 
     $("#working").show();
     $(document).tooltip();
-    getSessionId()
+    getSessionId().then(getReagentLots).then(getReagentLotNumber)
+    .then(function() {
+        var reagentLotNumberSelectHtml = [];
+        reagentLots.forEach(function(reagentLot) {
+            reagentLotNumberSelectHtml.push("<option value='" + reagentLot.lotNumber + "'>" + reagentLot.lotNumber + "</option>");
+        });
+        $("#reagentLotNumberSelect").append(reagentLotNumberSelectHtml.join(""));
+        $("#reagentLotNumberSelect").val(reagentLotNumber);
+    })
     .then(function() {
          $('#selectLocusGroup').selectize({ options: locusGroups, valueField: "lgName", labelField: "lgName", items: ["ABC"] });
     })
@@ -231,6 +276,11 @@ $(document).ready(function() {
         $("#imgtDbVersion").html(alleles[0].version);
         $("#sessionId").html(sessionId);
         $("#working").hide();
+    });
+
+    $("#reagentLotNumberSelect").change(function() {
+        reagentLotNumber = $(this).val();
+        putReagentLot(reagentLotNumber).done(function() { window.location.reload(); } );
     });
 
     $("#selectLocusGroup").change(function() {

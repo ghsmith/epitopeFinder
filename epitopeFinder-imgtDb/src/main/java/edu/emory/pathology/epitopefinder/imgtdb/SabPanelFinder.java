@@ -57,4 +57,8 @@ public class SabPanelFinder {
         return sabPanelList;
     }
 
+    public String getReagentLotNumber() {
+        return reagentLotNumber;
+    }
+    
 }

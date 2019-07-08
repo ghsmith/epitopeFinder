@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 <reagentLots xmlns="http://pathology.emory.edu/sabPanels" xmlns:xs="http://www.w3.org/2001/XMLSchema" xs:noNamespaceSchemaLocation="http://pathology.emory.edu/sabPanels.xsd">
 
-  <reagentLot lotNumber="12">
+  <reagentLot lotNumber="LABScreen Class II Standard + Supplemental (various lots)">
 
    <sabPanels>
     <sabPanel epRegLocusGroup="ABC">
@@ -105,8 +105,7 @@
         <sab epRegAlleleName="C*17:01"/>
         <sab epRegAlleleName="C*18:02"/>
         <!-- Source: LabScreen Single Antigen HLA Class I Supplement - Group 1, Lot 004 [LS1ASP01]
-		     https://www.onelambda.com/content/dam/onelambda/en/TDX/Documents/securedocs/docs/LOT_SPECIFIC/LS1ASP01_004_WS.pdf
-		-->
+		     https://www.onelambda.com/content/dam/onelambda/en/TDX/Documents/securedocs/docs/LOT_SPECIFIC/LS1ASP01_004_WS.pdf -->
         <sab epRegAlleleName="A*01:02"/>
         <sab epRegAlleleName="A*02:05"/>
         <sab epRegAlleleName="A*02:07"/>
@@ -163,11 +162,11 @@
         <sab epRegAlleleName="C*18:01"/>
     </sabPanel>
     <sabPanel epRegLocusGroup="DRB">
-		<!-- Source: LABScreen Single Antigen HLA Class II - Group 1, Lot 013 [LS2A01]
-		     https://www.onelambda.com/content/dam/onelambda/en/TDX/Documents/securedocs/docs/LOT_SPECIFIC/LS2A01_013_WS.pdf
-			 AND
-		     Source: LABScreen Single Antigen HLA Class II Supplement - Group 1 Lot 004 [LS2ASP01]
-		     https://www.onelambda.com/content/dam/onelambda/en/TDX/Documents/securedocs/docs/LOT_SPECIFIC/LS2ASP01_004_WS.pdf -->
+        <!-- Source: LABScreen Single Antigen HLA Class II - Group 1, Lot 013 [LS2A01]
+             https://www.onelambda.com/content/dam/onelambda/en/TDX/Documents/securedocs/docs/LOT_SPECIFIC/LS2A01_013_WS.pdf
+                 AND
+             Source: LABScreen Single Antigen HLA Class II Supplement - Group 1 Lot 004 [LS2ASP01]
+             https://www.onelambda.com/content/dam/onelambda/en/TDX/Documents/securedocs/docs/LOT_SPECIFIC/LS2ASP01_004_WS.pdf -->
         <sab epRegAlleleName="DRB1*01:01"/>
         <sab epRegAlleleName="DRB1*01:02"/>
         <sab epRegAlleleName="DRB1*01:03"/>
@@ -199,6 +198,7 @@
         <sab epRegAlleleName="DRB1*13:03"/>
         <sab epRegAlleleName="DRB1*14:01"/>
         <sab epRegAlleleName="DRB1*14:02"/>
+        <sab epRegAlleleName="DRB1*14:03"/>
         <sab epRegAlleleName="DRB1*14:04"/>
         <sab epRegAlleleName="DRB1*14:05"/>
         <sab epRegAlleleName="DRB1*14:06"/>
@@ -219,11 +219,11 @@
         <sab epRegAlleleName="DRB5*02:02"/>
     </sabPanel>
     <sabPanel epRegLocusGroup="DQ">
-		<!-- Source: LABScreen Single Antigen HLA Class II - Group 1, Lot 013 [LS2A01]
-		     https://www.onelambda.com/content/dam/onelambda/en/TDX/Documents/securedocs/docs/LOT_SPECIFIC/LS2A01_013_WS.pdf
-			 AND
-		     Source: LABScreen Single Antigen HLA Class II Supplement - Group 1 Lot 004 [LS2ASP01]
-		     https://www.onelambda.com/content/dam/onelambda/en/TDX/Documents/securedocs/docs/LOT_SPECIFIC/LS2ASP01_004_WS.pdf -->
+        <!-- Source: LABScreen Single Antigen HLA Class II - Group 1, Lot 013 [LS2A01]
+             https://www.onelambda.com/content/dam/onelambda/en/TDX/Documents/securedocs/docs/LOT_SPECIFIC/LS2A01_013_WS.pdf
+                 AND
+             Source: LABScreen Single Antigen HLA Class II Supplement - Group 1 Lot 004 [LS2ASP01]
+             https://www.onelambda.com/content/dam/onelambda/en/TDX/Documents/securedocs/docs/LOT_SPECIFIC/LS2ASP01_004_WS.pdf -->
         <sab epRegAlleleName="DQA1*01:01"/>
         <sab epRegAlleleName="DQA1*01:02"/>
         <sab epRegAlleleName="DQA1*01:03"/>
@@ -254,11 +254,11 @@
         <sab epRegAlleleName="DQB1*06:09"/>
     </sabPanel>
     <sabPanel epRegLocusGroup="DP">
-		<!-- Source: LABScreen Single Antigen HLA Class II - Group 1, Lot 013 [LS2A01]
-		     https://www.onelambda.com/content/dam/onelambda/en/TDX/Documents/securedocs/docs/LOT_SPECIFIC/LS2A01_013_WS.pdf
-			 AND
-		     Source: LABScreen Single Antigen HLA Class II Supplement - Group 1 Lot 004 [LS2ASP01]
-		     https://www.onelambda.com/content/dam/onelambda/en/TDX/Documents/securedocs/docs/LOT_SPECIFIC/LS2ASP01_004_WS.pdf -->
+        <!-- Source: LABScreen Single Antigen HLA Class II - Group 1, Lot 013 [LS2A01]
+             https://www.onelambda.com/content/dam/onelambda/en/TDX/Documents/securedocs/docs/LOT_SPECIFIC/LS2A01_013_WS.pdf
+                 AND
+             Source: LABScreen Single Antigen HLA Class II Supplement - Group 1 Lot 004 [LS2ASP01]
+             https://www.onelambda.com/content/dam/onelambda/en/TDX/Documents/securedocs/docs/LOT_SPECIFIC/LS2ASP01_004_WS.pdf -->
         <sab epRegAlleleName="DPA1*01:03"/>
         <sab epRegAlleleName="DPA1*01:04"/>
         <sab epRegAlleleName="DPA1*01:05"/>
@@ -298,18 +298,206 @@
    
   </reagentLot>
 
-  <reagentLot lotNumber="12-truncated">
+  <reagentLot lotNumber="LABScreen Class II Standard (various lots)">
         
    <sabPanels>
     <sabPanel epRegLocusGroup="ABC">
+        <!-- Source: LABScreen Single Antigen HLA Class I - Combi, Lot 011 [LS1A04]
+		     https://www.onelambda.com/content/dam/onelambda/en/TDX/Documents/securedocs/docs/LOT_SPECIFIC/LS1A04_011_WS.pdf -->
+        <sab epRegAlleleName="A*01:01"/>
+        <sab epRegAlleleName="A*02:01"/>
+        <sab epRegAlleleName="A*02:03"/>
+        <sab epRegAlleleName="A*02:06"/>
+        <sab epRegAlleleName="A*03:01"/>
+        <sab epRegAlleleName="A*11:01"/>
+        <sab epRegAlleleName="A*11:02"/>
+        <sab epRegAlleleName="A*23:01"/>
+        <sab epRegAlleleName="A*24:02"/>
+        <sab epRegAlleleName="A*24:03"/>
+        <sab epRegAlleleName="A*25:01"/>
+        <sab epRegAlleleName="A*26:01"/>
+        <sab epRegAlleleName="A*29:01"/>
+        <sab epRegAlleleName="A*29:02"/>
+        <sab epRegAlleleName="A*30:01"/>
+        <sab epRegAlleleName="A*30:02"/>
+        <sab epRegAlleleName="A*31:01"/>
+        <sab epRegAlleleName="A*32:01"/>
+        <sab epRegAlleleName="A*33:01"/>
+        <sab epRegAlleleName="A*33:03"/>
+        <sab epRegAlleleName="A*34:01"/>
+        <sab epRegAlleleName="A*34:02"/>
+        <sab epRegAlleleName="A*36:01"/>
+        <sab epRegAlleleName="A*43:01"/>
+        <sab epRegAlleleName="A*66:01"/>
+        <sab epRegAlleleName="A*66:02"/>
+        <sab epRegAlleleName="A*68:01"/>
+        <sab epRegAlleleName="A*68:02"/>
+        <sab epRegAlleleName="A*69:01"/>
+        <sab epRegAlleleName="A*74:01"/>
+        <sab epRegAlleleName="A*80:01"/>
+        <sab epRegAlleleName="B*07:02"/>
+        <sab epRegAlleleName="B*08:01"/>
+        <sab epRegAlleleName="B*13:01"/>
+        <sab epRegAlleleName="B*13:02"/>
+        <sab epRegAlleleName="B*14:01"/>
+        <sab epRegAlleleName="B*14:02"/>
+        <sab epRegAlleleName="B*15:01"/>
+        <sab epRegAlleleName="B*15:02"/>
+        <sab epRegAlleleName="B*15:03"/>
+        <sab epRegAlleleName="B*15:10"/>
+        <sab epRegAlleleName="B*15:11"/>
+        <sab epRegAlleleName="B*15:12"/>
+        <sab epRegAlleleName="B*15:13"/>
+        <sab epRegAlleleName="B*15:16"/>
+        <sab epRegAlleleName="B*18:01"/>
+        <sab epRegAlleleName="B*27:05"/>
+        <sab epRegAlleleName="B*27:08"/>
+        <sab epRegAlleleName="B*35:01"/>
+        <sab epRegAlleleName="B*37:01"/>
+        <sab epRegAlleleName="B*38:01"/>
+        <sab epRegAlleleName="B*39:01"/>
+        <sab epRegAlleleName="B*40:01"/>
+        <sab epRegAlleleName="B*40:02"/>
+        <sab epRegAlleleName="B*40:06"/>
+        <sab epRegAlleleName="B*41:01"/>
+        <sab epRegAlleleName="B*42:01"/>
+        <sab epRegAlleleName="B*44:02"/>
+        <sab epRegAlleleName="B*44:03"/>
+        <sab epRegAlleleName="B*45:01"/>
+        <sab epRegAlleleName="B*46:01"/>
+        <sab epRegAlleleName="B*47:01"/>
+        <sab epRegAlleleName="B*48:01"/>
+        <sab epRegAlleleName="B*49:01"/>
+        <sab epRegAlleleName="B*50:01"/>
+        <sab epRegAlleleName="B*51:01"/>
+        <sab epRegAlleleName="B*51:02"/>
+        <sab epRegAlleleName="B*52:01"/>
+        <sab epRegAlleleName="B*53:01"/>
+        <sab epRegAlleleName="B*54:01"/>
+        <sab epRegAlleleName="B*55:01"/>
+        <sab epRegAlleleName="B*56:01"/>
+        <sab epRegAlleleName="B*57:01"/>
+        <sab epRegAlleleName="B*57:03"/>
+        <sab epRegAlleleName="B*58:01"/>
+        <sab epRegAlleleName="B*59:01"/>
+        <sab epRegAlleleName="B*67:01"/>
+        <sab epRegAlleleName="B*73:01"/>
+        <sab epRegAlleleName="B*78:01"/>
+        <sab epRegAlleleName="B*81:01"/>
+        <sab epRegAlleleName="B*82:01"/>
+        <sab epRegAlleleName="C*01:02"/>
+        <sab epRegAlleleName="C*02:02"/>
+        <sab epRegAlleleName="C*03:02"/>
+        <sab epRegAlleleName="C*03:03"/>
+        <sab epRegAlleleName="C*03:04"/>
+        <sab epRegAlleleName="C*04:01"/>
+        <sab epRegAlleleName="C*05:01"/>
+        <sab epRegAlleleName="C*06:02"/>
+        <sab epRegAlleleName="C*07:02"/>
+        <sab epRegAlleleName="C*08:01"/>
+        <sab epRegAlleleName="C*12:03"/>
+        <sab epRegAlleleName="C*14:02"/>
+        <sab epRegAlleleName="C*15:02"/>
+        <sab epRegAlleleName="C*16:01"/>
+        <sab epRegAlleleName="C*17:01"/>
+        <sab epRegAlleleName="C*18:02"/>
     </sabPanel>
     <sabPanel epRegLocusGroup="DRB">
+        <!-- Source: LABScreen Single Antigen HLA Class II - Group 1, Lot 013 [LS2A01]
+             https://www.onelambda.com/content/dam/onelambda/en/TDX/Documents/securedocs/docs/LOT_SPECIFIC/LS2A01_013_WS.pdf -->
+        <sab epRegAlleleName="DRB1*01:01"/>
+        <sab epRegAlleleName="DRB1*01:02"/>
+        <sab epRegAlleleName="DRB1*01:03"/>
+        <sab epRegAlleleName="DRB1*03:01"/>
+        <sab epRegAlleleName="DRB1*03:02"/>
+        <sab epRegAlleleName="DRB1*04:01"/>
+        <sab epRegAlleleName="DRB1*04:02"/>
+        <sab epRegAlleleName="DRB1*04:03"/>
+        <sab epRegAlleleName="DRB1*04:04"/>
+        <sab epRegAlleleName="DRB1*04:05"/>
+        <!--sab epRegAlleleName="DRB1*04:06"/>
+        <sab epRegAlleleName="DRB1*04:07"/>
+        <sab epRegAlleleName="DRB1*04:10"/>
+        <sab epRegAlleleName="DRB1*04:11"/-->
+        <sab epRegAlleleName="DRB1*07:01"/>
+        <sab epRegAlleleName="DRB1*08:01"/>
+        <!--sab epRegAlleleName="DRB1*08:02"/>
+        <sab epRegAlleleName="DRB1*08:03"/>
+        <sab epRegAlleleName="DRB1*08:07"/-->
+        <sab epRegAlleleName="DRB1*09:01"/>
+        <sab epRegAlleleName="DRB1*09:02"/>
+        <sab epRegAlleleName="DRB1*10:01"/>
+        <sab epRegAlleleName="DRB1*11:01"/>
+        <sab epRegAlleleName="DRB1*11:04"/>
+        <sab epRegAlleleName="DRB1*12:01"/>
+        <sab epRegAlleleName="DRB1*12:02"/>
+        <sab epRegAlleleName="DRB1*13:01"/>
+        <!--sab epRegAlleleName="DRB1*13:02"/-->
+        <sab epRegAlleleName="DRB1*13:03"/>
+        <sab epRegAlleleName="DRB1*14:01"/>
+        <sab epRegAlleleName="DRB1*14:02"/>
+        <!--sab epRegAlleleName="DRB1*14:03"/>
+        <sab epRegAlleleName="DRB1*14:04"/>
+        <sab epRegAlleleName="DRB1*14:05"/>
+        <sab epRegAlleleName="DRB1*14:06"/-->
+        <sab epRegAlleleName="DRB1*14:54"/>
+        <sab epRegAlleleName="DRB1*15:01"/>
+        <sab epRegAlleleName="DRB1*15:02"/>
+        <sab epRegAlleleName="DRB1*15:03"/>
+        <sab epRegAlleleName="DRB1*16:01"/>
+        <sab epRegAlleleName="DRB1*16:02"/>
+        <sab epRegAlleleName="DRB3*01:01"/>
+        <!--sab epRegAlleleName="DRB3*02:01"/-->
+        <sab epRegAlleleName="DRB3*02:02"/>
+        <sab epRegAlleleName="DRB3*03:01"/>
+        <sab epRegAlleleName="DRB4*01:01"/>
+        <sab epRegAlleleName="DRB4*01:03"/>
+        <sab epRegAlleleName="DRB5*01:01"/>
+        <!--sab epRegAlleleName="DRB5*01:02"/-->
+        <sab epRegAlleleName="DRB5*02:02"/>
     </sabPanel>
     <sabPanel epRegLocusGroup="DQ">
+        <!-- Source: LABScreen Single Antigen HLA Class II - Group 1, Lot 013 [LS2A01]
+             https://www.onelambda.com/content/dam/onelambda/en/TDX/Documents/securedocs/docs/LOT_SPECIFIC/LS2A01_013_WS.pdf -->
+        <sab epRegAlleleName="DQA1*01:01"/>
+        <sab epRegAlleleName="DQA1*01:02"/>
+        <sab epRegAlleleName="DQA1*01:03"/>
+        <sab epRegAlleleName="DQA1*02:01"/>
+        <sab epRegAlleleName="DQA1*03:01"/>
+        <sab epRegAlleleName="DQA1*03:02"/>
+        <sab epRegAlleleName="DQA1*03:03"/>
+        <sab epRegAlleleName="DQA1*04:01"/>
+        <sab epRegAlleleName="DQA1*05:01"/>
+        <sab epRegAlleleName="DQA1*05:03"/>
+        <sab epRegAlleleName="DQA1*05:05"/>
+        <sab epRegAlleleName="DQA1*06:01"/>
+        <sab epRegAlleleName="DQB1*02:01"/>
+        <sab epRegAlleleName="DQB1*02:02"/>
+        <sab epRegAlleleName="DQB1*03:01"/>
+        <sab epRegAlleleName="DQB1*03:02"/>
+        <sab epRegAlleleName="DQB1*03:03"/>
+        <!--sab epRegAlleleName="DQB1*03:19"/-->
+        <sab epRegAlleleName="DQB1*04:01"/>
+        <sab epRegAlleleName="DQB1*04:02"/>
+        <sab epRegAlleleName="DQB1*05:01"/>
+        <sab epRegAlleleName="DQB1*05:02"/>
+        <!--sab epRegAlleleName="DQB1*05:03"/-->
+        <sab epRegAlleleName="DQB1*06:01"/>
+        <sab epRegAlleleName="DQB1*06:02"/>
+        <sab epRegAlleleName="DQB1*06:03"/>
+        <sab epRegAlleleName="DQB1*06:04"/>
+        <sab epRegAlleleName="DQB1*06:09"/>
     </sabPanel>
     <sabPanel epRegLocusGroup="DP">
-		<!-- Source: LABScreen Single Antigen HLA Class II - Group 1, Lot 013 [LS2A01]
-		     https://www.onelambda.com/content/dam/onelambda/en/TDX/Documents/securedocs/docs/LOT_SPECIFIC/LS2A01_013_WS.pdf -->
+        <!-- Source: LABScreen Single Antigen HLA Class II - Group 1, Lot 013 [LS2A01]
+             https://www.onelambda.com/content/dam/onelambda/en/TDX/Documents/securedocs/docs/LOT_SPECIFIC/LS2A01_013_WS.pdf -->
+        <sab epRegAlleleName="DPA1*01:03"/>
+        <sab epRegAlleleName="DPA1*01:04"/>
+        <sab epRegAlleleName="DPA1*01:05"/>
+        <sab epRegAlleleName="DPA1*02:01"/>
+        <sab epRegAlleleName="DPA1*02:02"/>
+        <sab epRegAlleleName="DPA1*03:01"/>
+        <sab epRegAlleleName="DPA1*04:01"/>
         <sab epRegAlleleName="DPB1*01:01"/>
         <sab epRegAlleleName="DPB1*02:01"/>
         <!--sab epRegAlleleName="DPB1*02:02"/-->

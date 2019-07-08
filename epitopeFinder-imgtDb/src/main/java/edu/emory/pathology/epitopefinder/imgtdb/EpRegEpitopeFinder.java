@@ -31,7 +31,7 @@ public class EpRegEpitopeFinder {
     static private String[] locusGroups = { "ABC", "DRB", "DQ", "DP" };
     
     static private String stringUrl = 
-        "http://www.epregistry.com.br/index/databases/database/%s/"
+        "https://www.epregistry.com.br/index/databases/database/%s/"
         + "?and_or=AND"
         + "&confirmed=All";
     
@@ -60,7 +60,7 @@ public class EpRegEpitopeFinder {
             for(String locusGroup : locusGroups) {
                 try {
                     URL url = new URL(String.format(stringUrl, locusGroup));
-                    Document document = Jsoup.connect(url.toString()).maxBodySize(0).timeout(5000).get();
+                    Document document = Jsoup.connect(url.toString()).maxBodySize(0).timeout(5000).userAgent("Mozilla").get();
                     for(Element rowE : Xsoup.compile("//section[@id='table-result']/div/table/tbody/tr").evaluate(document).getElements()) {
                         String epitopeName = Xsoup.compile("/td").evaluate(rowE).list().get(0).replaceAll("<td[^>]*>(.*)</td>", "$1").replaceAll("<sub[^>]*>(.*)</sub>", "-$1").trim();
                         List<String> alleleNameList;
@@ -141,7 +141,7 @@ public class EpRegEpitopeFinder {
                 });
                 try {
                     URL url = new URL(String.format(stringUrl, locusGroup) + queryString.toString());
-                    Document document = Jsoup.connect(url.toString()).maxBodySize(0).timeout(5000).get();
+                    Document document = Jsoup.connect(url.toString()).maxBodySize(0).timeout(5000).userAgent("Mozilla").get();
                     for(Element rowE : Xsoup.compile("//section[@id='table-result']/div/table/tbody/tr").evaluate(document).getElements()) {
                         String epitopeName = Xsoup.compile("/td").evaluate(rowE).list().get(0).replaceAll("<td[^>]*>(.*)</td>", "$1").replaceAll("<sub[^>]*>(.*)</sub>", "-$1").trim();
                         EpRegEpitope epitope = getEpitope(locusGroup, epitopeName);
