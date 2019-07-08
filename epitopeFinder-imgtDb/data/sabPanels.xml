@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 <reagentLots xmlns="http://pathology.emory.edu/sabPanels" xmlns:xs="http://www.w3.org/2001/XMLSchema" xs:noNamespaceSchemaLocation="http://pathology.emory.edu/sabPanels.xsd">
 
-  <reagentLot lotNumber="LABScreen Class II Standard + Supplemental (various lots)">
+  <reagentLot lotNumber="LABScreen Class I/II Standard + Supplement (various lots)">
 
    <sabPanels>
     <sabPanel epRegLocusGroup="ABC">
@@ -298,7 +298,7 @@
    
   </reagentLot>
 
-  <reagentLot lotNumber="LABScreen Class II Standard (various lots)">
+  <reagentLot lotNumber="LABScreen Class I/II Standard (various lots)">
         
    <sabPanels>
     <sabPanel epRegLocusGroup="ABC">
