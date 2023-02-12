@@ -1,5 +1,6 @@
 package edu.emory.pathology.epitopefinder.imgtdb;
 
+import edu.emory.pathology.epitopefinder.imgtdb.data.Allele;
 import edu.emory.pathology.epitopefinder.imgtdb.data.EpRegEpitope;
 import java.io.IOException;
 import java.io.StringWriter;
@@ -61,7 +62,7 @@ public class EpRegEpitopeFinder {
                 try {
                     URL url = new URL(String.format(stringUrl, locusGroup));
                     Document document = Jsoup.connect(url.toString()).maxBodySize(0).timeout(5000).userAgent("Mozilla").get();
-                    for(Element rowE : Xsoup.compile("//section[@id='table-result']/div/table/tbody/tr").evaluate(document).getElements()) {
+                    for(Element rowE : Xsoup.compile("//section[@id='table-resultt']/div/table/tbody/tr").evaluate(document).getElements()) {
                         String epitopeName = Xsoup.compile("/td").evaluate(rowE).list().get(1).replaceAll("<td[^>]*>(.*)</td>", "$1").replaceAll("<sub[^>]*>(.*)</sub>", "-$1").replace("&nbsp;", "").trim();
                         List<String> alleleNameList;
                         alleleNameList = new ArrayList<>(Arrays.asList(Xsoup.compile("//div[starts-with(@id, 'myModalAlleleAll')]/div[@class='modal-body']/p[2]/text()").evaluate(rowE).get().replace(" ", "").replace(".", "").split(",")));
@@ -132,7 +133,7 @@ public class EpRegEpitopeFinder {
                 try {
                     URL url = new URL(String.format(stringUrl, locusGroup) + queryString.toString());
                     Document document = Jsoup.connect(url.toString()).maxBodySize(0).timeout(5000).userAgent("Mozilla").get();
-                    for(Element rowE : Xsoup.compile("//section[@id='table-result']/div/table/tbody/tr").evaluate(document).getElements()) {
+                    for(Element rowE : Xsoup.compile("//section[@id='table-resultt']/div/table/tbody/tr").evaluate(document).getElements()) {
                         String epitopeName = Xsoup.compile("/td").evaluate(rowE).list().get(1).replaceAll("<td[^>]*>(.*)</td>", "$1").replaceAll("<sub[^>]*>(.*)</sub>", "-$1").replace("&nbsp;", "").trim();
                         EpRegEpitope epitope = getEpitope(locusGroup, epitopeName);
                         EpRegEpitope.EpRegEpitopeAlleleFilterRef alleleFilter = new EpRegEpitope.EpRegEpitopeAlleleFilterRef();
@@ -180,6 +181,19 @@ public class EpRegEpitopeFinder {
                 if((epitope.getCompatSabPanelCountPresent() + epitope.getCompatSabPanelCountAbsent()) > 0) {
                     epitope.setCompatSabPanelPctPresent((100 * epitope.getCompatSabPanelCountPresent()) / (epitope.getCompatSabPanelCountPresent() + epitope.getCompatSabPanelCountAbsent()));
                 }
+
+                // 4. Identify recipient epitopes. Currently limiting to only the epitopes we're going to show, because this is slow.
+                if(epitope.getCompatSabPanelCountPresent() > 0) {
+                    epitope.setCompatRecipientEpitope(false);
+                    for(String epRegAlleleName : epitope.getAlleleMap().keySet()) {
+                        Allele allele = alleleFinder.getAlleleByEpRegAlleleName(epRegAlleleName);
+                        if(allele.getRecipientTypeForCompat()) {
+                            epitope.setCompatRecipientEpitope(true);
+                            break;
+                        }
+                    }
+                }
+
             });
         }
         

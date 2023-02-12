@@ -310,6 +310,22 @@ function sort(columnName, direction) {
     });
 }
 
+function hideSelfRows() {
+    var rows = $('#tableReport tbody tr').get();
+    $.each(rows, function(index, row) {
+        if($(row).data("self-epitope")) {
+            $(row).hide();
+        }
+    });
+}
+
+function showAllRows() {
+    var rows = $('#tableReport tbody tr').get();
+    $.each(rows, function(index, row) {
+        $(row).show();
+    });
+}
+
 // Document ready! Let's go...
 $(document).ready(function() {
 
@@ -411,6 +427,7 @@ $(document).ready(function() {
                 });
             });
             var htmlReport = [];
+            htmlReport.push("<input type='checkbox' onchange='{ if(this.checked) { hideSelfRows(); } else { showAllRows(); } }'> hide self epitopes");
             htmlReport.push("<table id='tableReport'><thead>");
             htmlReport.push("<tr><th><span style='font-size: 30px;'><a href='javascript:sort(\"epitopeName\", \"asc\")' style='text-decoration: none;'>&#8681;</a><a href='javascript:sort(\"epitopeName\", \"desc\")' style='text-decoration: none;'>&#8679;</a></span><br/>epitope</th>");
             htmlReport.push("<th><span style='font-size: 30px;'><a href='javascript:sort(\"countPresent\", \"asc\")' style='text-decoration: none;'>&#8681;</a><a href='javascript:sort(\"countPresent\", \"desc\")' style='text-decoration: none;'>&#8679;</a></span><br/>&nbsp;+&nbsp;</th>");
@@ -426,8 +443,13 @@ $(document).ready(function() {
             }
             htmlReport.push("</thead></tbody>")
             $.each(epitopes.filter(function(epitope) { return epitope.compatSabPanelCountPresent > 0; }), function(index, epitope) {
-                htmlReport.push("<tr data-epitope-name='" + epitope.epitopeName + "'>");
-                htmlReport.push("<td class='name'>" + epitope.epitopeName + "</td>");
+                htmlReport.push("<tr data-epitope-name='" + epitope.epitopeName + "' data-self-epitope='" + epitope.compatRecipientEpitope + "'>");
+                if(epitope.compatRecipientEpitope) {
+                    htmlReport.push("<td class='name'>" + epitope.epitopeName + "&nbsp;[self]</td>");
+                }
+                else {
+                    htmlReport.push("<td class='name'>" + epitope.epitopeName + "</td>");
+                }
                 htmlReport.push("<td class='count'>" + epitope.compatSabPanelCountPresent + "</td>");
                 htmlReport.push("<td class='count'>" + epitope.compatSabPanelCountAbsent + "</td>");
                 htmlReport.push("<td class='count'>" + epitope.compatSabPanelCountUnknown + "</td>");

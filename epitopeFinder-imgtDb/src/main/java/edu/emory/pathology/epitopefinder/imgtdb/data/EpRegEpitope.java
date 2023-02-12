@@ -83,6 +83,7 @@ public class EpRegEpitope implements Serializable {
     private Integer compatSabPanelCountAbsent;
     private Integer compatSabPanelCountUnknown;
     private Integer compatSabPanelPctPresent;
+    private Boolean compatRecipientEpitope;
 
     public Integer getSequenceNumber() {
         return sequenceNumber;
@@ -162,6 +163,14 @@ public class EpRegEpitope implements Serializable {
 
     public void setCompatSabPanelPctPresent(Integer compatSabPanelPctPresent) {
         this.compatSabPanelPctPresent = compatSabPanelPctPresent;
+    }
+
+    public Boolean getCompatRecipientEpitope() {
+        return compatRecipientEpitope;
+    }
+
+    public void setCompatRecipientEpitope(Boolean compatRecipientEpitope) {
+        this.compatRecipientEpitope = compatRecipientEpitope;
     }
     
 }
