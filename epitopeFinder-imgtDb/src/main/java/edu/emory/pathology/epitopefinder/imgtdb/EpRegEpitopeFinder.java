@@ -187,6 +187,10 @@ public class EpRegEpitopeFinder {
                     epitope.setCompatRecipientEpitope(false);
                     for(String epRegAlleleName : epitope.getAlleleMap().keySet()) {
                         Allele allele = alleleFinder.getAlleleByEpRegAlleleName(epRegAlleleName);
+                        if(allele == null) {
+                            LOG.log(Level.SEVERE, String.format("epitope %s references allele %s, but that allele is not in the database", epitope.getEpitopeName(), epRegAlleleName));
+                            continue;
+                        }
                         if(allele.getRecipientTypeForCompat()) {
                             epitope.setCompatRecipientEpitope(true);
                             break;
