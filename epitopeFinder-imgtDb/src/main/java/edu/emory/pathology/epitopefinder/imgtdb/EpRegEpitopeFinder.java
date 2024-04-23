@@ -62,12 +62,15 @@ public class EpRegEpitopeFinder {
                 try {
                     URL url = new URL(String.format(stringUrl, locusGroup));
                     Document document = Jsoup.connect(url.toString()).maxBodySize(0).timeout(5000).userAgent("Mozilla").get();
-                    for(Element rowE : Xsoup.compile("//section[@id='table-resultt']/div/table/tbody/tr").evaluate(document).getElements()) {
-                        String epitopeName = Xsoup.compile("/td").evaluate(rowE).list().get(1).replaceAll("<td[^>]*>(.*)</td>", "$1").replaceAll("<sub[^>]*>(.*)</sub>", "-$1").replace("&nbsp;", "").trim();
+                    int x = 0;
+                    for(Element rowE : Xsoup.compile("//section[@id='table-result']/div/table/tbody/tr").evaluate(document).getElements()) {
+                        x++;
+                        String id = Xsoup.compile("/td").evaluate(rowE).list().get(0).replaceAll("<td>(.*)</td>", "$1").trim();
+                        String epitopeName = Xsoup.compile("/td").evaluate(rowE).list().get(1).replaceAll("<td> <b>(.*)</b>.*</td>", "$1").replaceAll("<sub[^>]*>(.*)</sub>", "-$1").replace("&nbsp;", "").trim();
                         List<String> alleleNameList;
-                        alleleNameList = new ArrayList<>(Arrays.asList(Xsoup.compile("//div[starts-with(@id, 'myModalAlleleAll')]/div[@class='modal-body']/p[2]/text()").evaluate(rowE).get().replace(" ", "").replace(".", "").split(",")));
+                        alleleNameList = new ArrayList<>(Arrays.asList(Xsoup.compile("//div[starts-with(@id, 'myModalAlleleAll" + x + "')]/div[@class='modal-body']/p[1]/text()").evaluate(rowE).get().replace(" ", "").replace(".", "").split(",")));
                         List<String> alleleNameListLuminex;
-                        alleleNameListLuminex = new ArrayList<>(Arrays.asList(Xsoup.compile("//div[starts-with(@id, 'myModalAlleleAll')]/div[@class='modal-body']/p[1]/text()").evaluate(rowE).get().replace(" ", "").replace(".", "").split(",")));
+                        alleleNameListLuminex = new ArrayList<>(Arrays.asList(Xsoup.compile("/td").evaluate(rowE).list().get(9).replaceAll("<td> <small>(.*)</small> </td>", "$1").replace(" ", "").replace(".", "").split(",")));
                         EpRegEpitope epitope = new EpRegEpitope();
                         epitopeList.add(epitope);
                         epitope.setSourceUrl(url.toString());
@@ -133,8 +136,8 @@ public class EpRegEpitopeFinder {
                 try {
                     URL url = new URL(String.format(stringUrl, locusGroup) + queryString.toString());
                     Document document = Jsoup.connect(url.toString()).maxBodySize(0).timeout(5000).userAgent("Mozilla").get();
-                    for(Element rowE : Xsoup.compile("//section[@id='table-resultt']/div/table/tbody/tr").evaluate(document).getElements()) {
-                        String epitopeName = Xsoup.compile("/td").evaluate(rowE).list().get(1).replaceAll("<td[^>]*>(.*)</td>", "$1").replaceAll("<sub[^>]*>(.*)</sub>", "-$1").replace("&nbsp;", "").trim();
+                    for(Element rowE : Xsoup.compile("//section[@id='table-result']/div/table/tbody/tr").evaluate(document).getElements()) {
+                        String epitopeName = Xsoup.compile("/td").evaluate(rowE).list().get(1).replaceAll("<td> <b>(.*)</b>.*</td>", "$1").replaceAll("<sub[^>]*>(.*)</sub>", "-$1").replace("&nbsp;", "").trim();
                         EpRegEpitope epitope = getEpitope(locusGroup, epitopeName);
                         EpRegEpitope.EpRegEpitopeAlleleFilterRef alleleFilter = new EpRegEpitope.EpRegEpitopeAlleleFilterRef();
                         epitope.getCompatAlleleFilterMap().put(alleleSab.getEpRegAlleleName(), alleleFilter);
@@ -188,7 +191,7 @@ public class EpRegEpitopeFinder {
                     for(String epRegAlleleName : epitope.getAlleleMap().keySet()) {
                         Allele allele = alleleFinder.getAlleleByEpRegAlleleName(epRegAlleleName);
                         if(allele == null) {
-                            LOG.log(Level.SEVERE, String.format("epitope %s references allele %s, but that allele is not in the database", epitope.getEpitopeName(), epRegAlleleName));
+                            //LOG.log(Level.SEVERE, String.format("epitope %s references allele %s, but that allele is not in the database", epitope.getEpitopeName(), epRegAlleleName));
                             continue;
                         }
                         if(allele.getRecipientTypeForCompat()) {
