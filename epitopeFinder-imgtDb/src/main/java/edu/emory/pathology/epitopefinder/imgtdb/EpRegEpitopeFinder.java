@@ -70,7 +70,7 @@ public class EpRegEpitopeFinder {
                         List<String> alleleNameList;
                         alleleNameList = new ArrayList<>(Arrays.asList(Xsoup.compile("//div[starts-with(@id, 'myModalAlleleAll" + x + "')]/div[@class='modal-body']/p[1]/text()").evaluate(rowE).get().replace(" ", "").replace(".", "").split(",")));
                         List<String> alleleNameListLuminex;
-                        alleleNameListLuminex = new ArrayList<>(Arrays.asList(Xsoup.compile("/td").evaluate(rowE).list().get(9).replaceAll("<td> <small>(.*)</small> </td>", "$1").replace(" ", "").replace(".", "").split(",")));
+                        alleleNameListLuminex = new ArrayList<>(Arrays.asList(Xsoup.compile("/td").evaluate(rowE).list().get(9).replaceAll("<td>.*<small>(.*)</small>.*</td>", "$1").replace(" ", "").replace(".", "").split(",")));
                         EpRegEpitope epitope = new EpRegEpitope();
                         epitopeList.add(epitope);
                         epitope.setSourceUrl(url.toString());
