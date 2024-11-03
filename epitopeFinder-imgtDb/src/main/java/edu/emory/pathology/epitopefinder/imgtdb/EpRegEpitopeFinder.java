@@ -32,7 +32,8 @@ public class EpRegEpitopeFinder {
     static private String[] locusGroups = { "ABC", "DRB", "DQ", "DP" };
     
     static private String stringUrl = 
-        "https://www.epregistry.com.br/index/databases/database/%s/"
+        //"https://www.epregistry.com.br/index/databases/database/%s/"
+        "http://xyz.epregistry.com.br/index/databases/database/%s/"
         + "?and_or=AND"
         + "&confirmed=All";
     
@@ -73,7 +74,7 @@ public class EpRegEpitopeFinder {
                         alleleNameListLuminex = new ArrayList<>(Arrays.asList(Xsoup.compile("/td").evaluate(rowE).list().get(9).replaceAll("<td>.*<small>(.*)</small>.*</td>", "$1").replace(" ", "").replace(".", "").split(",")));
                         EpRegEpitope epitope = new EpRegEpitope();
                         epitopeList.add(epitope);
-                        epitope.setSourceUrl(url.toString());
+                        epitope.setSourceUrl(url.toString().replace("http://xyz.", "https://www."));
                         epitope.setLocusGroup(locusGroup);
                         epitope.setEpitopeName(epitopeName);
                         epitope.setAlleleMap(new TreeMap<>());
@@ -141,7 +142,8 @@ public class EpRegEpitopeFinder {
                         EpRegEpitope epitope = getEpitope(locusGroup, epitopeName);
                         EpRegEpitope.EpRegEpitopeAlleleFilterRef alleleFilter = new EpRegEpitope.EpRegEpitopeAlleleFilterRef();
                         epitope.getCompatAlleleFilterMap().put(alleleSab.getEpRegAlleleName(), alleleFilter);
-                        alleleFilter.setSourceUrl(url.toString());
+                        //alleleFilter.setSourceUrl(url.toString());
+                        alleleFilter.setSourceUrl(url.toString().replace("http://xyz.", "https://www."));
                         alleleFilter.setReactiveEpRegAlleleName(alleleSab.getEpRegAlleleName());
                     }
                 }
