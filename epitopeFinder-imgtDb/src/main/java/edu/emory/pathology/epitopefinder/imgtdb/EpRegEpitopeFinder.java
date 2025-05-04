@@ -65,9 +65,10 @@ public class EpRegEpitopeFinder {
                         String id = Xsoup.compile("/td").evaluate(rowE).list().get(0).replaceAll("<td>(.*)</td>", "$1").trim();
                         String epitopeName = Xsoup.compile("/td").evaluate(rowE).list().get(1).replaceAll("<td>.*<b>(.*)</b>.*</td>", "$1").replaceAll("<sub[^>]*>(.*)</sub>", "-$1").replace("&nbsp;", "").trim();
                         List<String> alleleNameListLuminex = new ArrayList<>(Arrays.asList(Xsoup.compile("/td").evaluate(rowE).list().get(8).replaceAll("<td><small>(.*)</small></td>", "$1").replaceAll("<a[^>]*>([^<]*)</a>", "$1").replace(" ", "").split(",")));
-                        String allAlleleUri = Xsoup.compile("/td").evaluate(rowE).getElements().get(9).select("a").first().attr("data-modal-url-value");
-                        Document nestedDocument = Jsoup.connect(stringUrl + allAlleleUri).maxBodySize(0).timeout(20000).userAgent("Mozilla").get();
-                        List<String> alleleNameList = new ArrayList<>(Arrays.asList(Xsoup.compile("//div[@class='modal-body']/p").evaluate(nestedDocument).get().replaceAll("<p>(.*)</p>", "$1").replaceAll(" ", "").split(",")));
+                        //String allAlleleUri = Xsoup.compile("/td").evaluate(rowE).getElements().get(9).select("a").first().attr("data-modal-url-value");
+                        //Document nestedDocument = Jsoup.connect(stringUrl + allAlleleUri).maxBodySize(0).timeout(20000).userAgent("Mozilla").get();
+                        //List<String> alleleNameList = new ArrayList<>(Arrays.asList(Xsoup.compile("//div[@class='modal-body']/p").evaluate(nestedDocument).get().replaceAll("<p>(.*)</p>", "$1").replaceAll(" ", "").split(",")));
+                        List<String> alleleNameList = new ArrayList<>(Arrays.asList(Xsoup.compile("/td").evaluate(rowE).list().get(8).replaceAll("<td><small>(.*)</small></td>", "$1").replaceAll("<a[^>]*>([^<]*)</a>", "$1").replace(" ", "").split(",")));
                         EpRegEpitope epitope = new EpRegEpitope();
                         epitopeList.add(epitope);
                         epitope.setSourceUrl((stringUrl + "/databases/" + locusGroup).replace("http://xyz.", "https://www."));
@@ -128,7 +129,7 @@ public class EpRegEpitopeFinder {
                 StringWriter queryString = new StringWriter();
                 queryString.append(String.format("?confirmation_status=All&hla_typing=%s", alleleSab.getEpRegAlleleName()));
                 alleleFinder.getAlleleListByEpRegLocusGroup(locusGroup).stream().filter((allele) -> (allele.getRecipientTypeForCompat())).forEach((alleleType) -> {
-                    queryString.append(String.format("&patient_hla_typeing%%5B%%5D=%s", alleleType.getEpRegAlleleName()));
+                    queryString.append(String.format("&patient_hla_typing%%5B%%5D=%s", alleleType.getEpRegAlleleName()));
                 });
                 queryString.append("&commit=Search");
                 try {
