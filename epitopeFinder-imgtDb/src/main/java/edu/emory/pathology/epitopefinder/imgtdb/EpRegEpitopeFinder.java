@@ -5,7 +5,6 @@ import edu.emory.pathology.epitopefinder.imgtdb.data.EpRegEpitope;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -32,10 +31,8 @@ public class EpRegEpitopeFinder {
     static private String[] locusGroups = { "ABC", "DRB", "DQ", "DP" };
     
     static private String stringUrl = 
-        //"https://www.epregistry.com.br/index/databases/database/%s/"
-        "http://xyz.epregistry.com.br/index/databases/database/%s/"
-        + "?and_or=AND"
-        + "&confirmed=All";
+        //"https://www.epregistry.com.br";
+        "http://xyz.epregistry.com.br";
     
     private String xmlFileName;
     private List<EpRegEpitope> epitopeList;
@@ -61,20 +58,19 @@ public class EpRegEpitopeFinder {
             epitopeList = new ArrayList();
             for(String locusGroup : locusGroups) {
                 try {
-                    URL url = new URL(String.format(stringUrl, locusGroup));
-                    Document document = Jsoup.connect(url.toString()).maxBodySize(0).timeout(5000).userAgent("Mozilla").get();
+                    Document document = Jsoup.connect(stringUrl + "/databases/" + locusGroup).maxBodySize(0).timeout(20000).userAgent("Mozilla").get();
                     int x = 0;
                     for(Element rowE : Xsoup.compile("//section[@id='table-result']/div/table/tbody/tr").evaluate(document).getElements()) {
                         x++;
                         String id = Xsoup.compile("/td").evaluate(rowE).list().get(0).replaceAll("<td>(.*)</td>", "$1").trim();
                         String epitopeName = Xsoup.compile("/td").evaluate(rowE).list().get(1).replaceAll("<td>.*<b>(.*)</b>.*</td>", "$1").replaceAll("<sub[^>]*>(.*)</sub>", "-$1").replace("&nbsp;", "").trim();
-                        List<String> alleleNameList;
-                        alleleNameList = new ArrayList<>(Arrays.asList(Xsoup.compile("//div[starts-with(@id, 'myModalAlleleAll" + x + "')]/div[@class='modal-body']/p[1]/text()").evaluate(rowE).get().replace(" ", "").replace(".", "").split(",")));
-                        List<String> alleleNameListLuminex;
-                        alleleNameListLuminex = new ArrayList<>(Arrays.asList(Xsoup.compile("/td").evaluate(rowE).list().get(9).replaceAll("<td>.*<small>(.*)</small>.*</td>", "$1").replace(" ", "").replace(".", "").split(",")));
+                        List<String> alleleNameListLuminex = new ArrayList<>(Arrays.asList(Xsoup.compile("/td").evaluate(rowE).list().get(8).replaceAll("<td><small>(.*)</small></td>", "$1").replaceAll("<a[^>]*>([^<]*)</a>", "$1").replace(" ", "").split(",")));
+                        String allAlleleUri = Xsoup.compile("/td").evaluate(rowE).getElements().get(9).select("a").first().attr("data-modal-url-value");
+                        Document nestedDocument = Jsoup.connect(stringUrl + allAlleleUri).maxBodySize(0).timeout(20000).userAgent("Mozilla").get();
+                        List<String> alleleNameList = new ArrayList<>(Arrays.asList(Xsoup.compile("//div[@class='modal-body']/p").evaluate(nestedDocument).get().replaceAll("<p>(.*)</p>", "$1").replaceAll(" ", "").split(",")));
                         EpRegEpitope epitope = new EpRegEpitope();
                         epitopeList.add(epitope);
-                        epitope.setSourceUrl(url.toString().replace("http://xyz.", "https://www."));
+                        epitope.setSourceUrl((stringUrl + "/databases/" + locusGroup).replace("http://xyz.", "https://www."));
                         epitope.setLocusGroup(locusGroup);
                         epitope.setEpitopeName(epitopeName);
                         epitope.setAlleleMap(new TreeMap<>());
@@ -130,20 +126,20 @@ public class EpRegEpitopeFinder {
         for(String locusGroup : locusGroups) {
             alleleFinder.getAlleleListByEpRegLocusGroup(locusGroup).stream().filter((allele) -> (allele.getRecipientAntibodyForCompat())).forEach((alleleSab) -> {
                 StringWriter queryString = new StringWriter();
-                queryString.append(String.format("&hlaTyping=%s", alleleSab.getEpRegAlleleName()));
+                queryString.append(String.format("?confirmation_status=All&hla_typing=%s", alleleSab.getEpRegAlleleName()));
                 alleleFinder.getAlleleListByEpRegLocusGroup(locusGroup).stream().filter((allele) -> (allele.getRecipientTypeForCompat())).forEach((alleleType) -> {
-                    queryString.append(String.format("&typeRecipient%%5B%%5D=%s", alleleType.getEpRegAlleleName()));
+                    queryString.append(String.format("&patient_hla_typeing%%5B%%5D=%s", alleleType.getEpRegAlleleName()));
                 });
+                queryString.append("&commit=Search");
                 try {
-                    URL url = new URL(String.format(stringUrl, locusGroup) + queryString.toString());
-                    Document document = Jsoup.connect(url.toString()).maxBodySize(0).timeout(5000).userAgent("Mozilla").get();
+                    Document document = Jsoup.connect(stringUrl + "/databases/" + locusGroup + queryString.toString()).maxBodySize(0).timeout(20000).userAgent("Mozilla").get();
                     for(Element rowE : Xsoup.compile("//section[@id='table-result']/div/table/tbody/tr").evaluate(document).getElements()) {
                         String epitopeName = Xsoup.compile("/td").evaluate(rowE).list().get(1).replaceAll("<td>.*<b>(.*)</b>.*</td>", "$1").replaceAll("<sub[^>]*>(.*)</sub>", "-$1").replace("&nbsp;", "").trim();
                         EpRegEpitope epitope = getEpitope(locusGroup, epitopeName);
                         EpRegEpitope.EpRegEpitopeAlleleFilterRef alleleFilter = new EpRegEpitope.EpRegEpitopeAlleleFilterRef();
                         epitope.getCompatAlleleFilterMap().put(alleleSab.getEpRegAlleleName(), alleleFilter);
                         //alleleFilter.setSourceUrl(url.toString());
-                        alleleFilter.setSourceUrl(url.toString().replace("http://xyz.", "https://www."));
+                        alleleFilter.setSourceUrl((stringUrl + "/databases/" + locusGroup + queryString.toString()).replace("http://xyz.", "https://www."));
                         alleleFilter.setReactiveEpRegAlleleName(alleleSab.getEpRegAlleleName());
                     }
                 }
